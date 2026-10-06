@@ -104,7 +104,8 @@ def main() -> None:
     now = dt.datetime.now(dt.timezone.utc)
     nz, slate_date = now.astimezone(NZ), now.astimezone(ET).date()
     if args.test:
-        run_live(cfg, now, slate_date, ROOT / "output" / "test", test=True)
+        # Next upcoming US slate, whatever the time of day.
+        run_live(cfg, now, (now + dt.timedelta(hours=12)).astimezone(ET).date(), ROOT / "output" / "test", test=True)
         return
     out = ROOT / "output"
     if not args.force and (nz.hour not in (8, 9, 10) or (out / f"brief_{nz.date()}.md").exists()):
