@@ -100,6 +100,18 @@ Do a walk-forward backtest on the 2025–26 season before any live use:
 * Flag `TEAM_CHANGE` on any pick for a player in his first 10 games with a new team (off-season move or trade).
 * Flag `ROLE_CHANGE` during a season's first 10 games when the player's average minutes this season differ from last season's recent minutes by 6 or more.
 
+## Daily brief as built
+
+* `scripts/daily.py` (GitHub Action `daily-brief.yml`): settle earlier ledger rows → top up the current season from ESPN → today's slate, rosters (available = roster minus Out/Doubtful) and injuries → replay history and learn the recalibration → project → pick → morning Odds API call → `output/brief_<NZ date>.{md,json}`, ledger rows, closing-line plan (`data/picks/<NZ date>.json`).
+* **Lines**: Betcha's lines are unknown to the model, so each pick is stated at the proxy line (last-10 average, nearest x.5) and carries a **ladder**: for every half-point line around the projection, the side the model favours and its bet threshold. The user bets only if Betcha's price at Betcha's line is at or above the ladder threshold.
+* Picks: one per player, best edge vs $1.87, top 8, games tipping within 30 minutes excluded.
+* `INJURY_PENDING`: the player, or a teammate averaging 24+ minutes, is questionable/day-to-day/doubtful.
+* `CONSENSUS_GAP`: consensus line ≥2 pts / ≥1.5 reb from ours, the model's side loses at the consensus line, or model vs no-vig market probability differ by ≥15pp.
+* **Closing line**: `scripts/closing_lines.py` (`closing-lines.yml`, every 30 minutes through the NZ afternoon) makes one Odds API call per planned game once it tips within 60 minutes, and writes the consensus line and prices into the ledger.
+* **Ledger**: user fills `betcha_line` and `betcha_price` only. Results are graded at the Betcha line if given, else the brief line; a player who does not play is VOID. `paper_pl_units` = 1 unit at the threshold on every pick; `pl_units` = actual bets; `clv_pct` (same line, no-vig closing price) and `clv_line`.
+* **Weekly report**: `scripts/weekly_report.py`, Mondays NZT.
+* Test modes: `--replay YYYY-MM-DD` (past slate from cached box scores; no injuries or Odds API), `--test` (live pipeline on the next slate including preseason, written to `output/test/`).
+
 ## Automation
 
 * A GitHub Action runs the pipeline daily at 09:00 NZT. That is 20:00 UTC the previous day while NZ is on daylight time; adjust when NZ daylight time ends. It commits the brief and ledger to the repo.
