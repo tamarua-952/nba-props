@@ -1,0 +1,7 @@
+nba_api>=1.11
+pandas>=2.2
+numpy>=1.26
+scipy>=1.12
+requests>=2.31
+PyYAML>=6.0
+pytest>=8.0
