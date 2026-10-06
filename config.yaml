@@ -23,8 +23,11 @@ odds_api:
   usage_file: data/odds_api_usage.json
 
 backtest:
-  season: 2026               # ESPN season year: 2026 = 2025-26
-  start: 2025-10-21
-  end: 2026-04-12
+  # ESPN season year: 2026 = 2025-26. Earlier seasons are history only (they
+  # count toward min_prior_games); calibration is reported on evaluate_season.
+  seasons:
+    - {season: 2025, start: 2024-10-22, end: 2025-04-13}
+    - {season: 2026, start: 2025-10-21, end: 2026-04-12}
+  evaluate_season: 2026
   min_prior_games: 5         # player needs this many prior games to be projected
   min_proj_minutes: 20       # props are only offered on rotation players

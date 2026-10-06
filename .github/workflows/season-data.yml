@@ -2,6 +2,10 @@ name: Backtest season data pull
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - scripts/pull_season.py
+      - .github/workflows/season-data.yml
 
 permissions:
   contents: write

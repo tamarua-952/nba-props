@@ -1,6 +1,6 @@
-"""Pull and cache a full regular season of ESPN box scores for the backtest.
+"""Pull and cache regular seasons of ESPN box scores for the backtest.
 
-    python scripts/pull_season.py            # season from config.yaml
+    python scripts/pull_season.py            # every season in config.yaml
 
 Every raw response is cached under data/raw/, so reruns only fetch what is
 missing. Writes data/processed/{games,team_games,player_games}_<season>.csv.gz
@@ -45,9 +45,11 @@ def short_games(teams: list[dict], players: list[dict]) -> list[dict]:
 
 
 def main() -> None:
-    cfg = config.load()["backtest"]
-    season = cfg["season"]
-    start, end = dt.date.fromisoformat(str(cfg["start"])), dt.date.fromisoformat(str(cfg["end"]))
+    for cfg in config.load()["backtest"]["seasons"]:
+        pull(cfg["season"], dt.date.fromisoformat(str(cfg["start"])), dt.date.fromisoformat(str(cfg["end"])))
+
+
+def pull(season: int, start: dt.date, end: dt.date) -> None:
     ef = espn.fetcher()
     bf = None
 
