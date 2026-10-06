@@ -1,0 +1,26 @@
+{
+ "calls": [
+  {
+   "at": "2026-10-06T01:56:41+00:00",
+   "kind": "events",
+   "status": 200,
+   "cost": 0,
+   "used": 2,
+   "remaining": 498,
+   "params": {}
+  },
+  {
+   "at": "2026-10-06T01:56:41+00:00",
+   "kind": "event_odds",
+   "status": 200,
+   "cost": 2,
+   "used": 4,
+   "remaining": 496,
+   "params": {
+    "regions": "us",
+    "markets": "player_points,player_rebounds",
+    "oddsFormat": "decimal"
+   }
+  }
+ ]
+}
