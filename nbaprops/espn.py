@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import re
 
 from . import config
 from .http import Fetcher
@@ -154,3 +155,71 @@ def parse_summary(s: dict) -> tuple[dict, list[dict], list[dict]]:
                 row["tov"] = int(v["turnovers"])
             player_rows.append(row)
     return game, team_rows, player_rows
+
+
+def roster(f: Fetcher, team_id: str, day: dt.date) -> dict:
+    return f.get_json(f"{SITE}/teams/{team_id}/roster", name=f"roster/{day:%Y%m%d}/{team_id}")
+
+
+def parse_roster(r: dict) -> list[dict]:
+    return [{"player_id": a["id"], "player": a.get("displayName", ""),
+             "pos": (a.get("position") or {}).get("abbreviation", "")} for a in r.get("athletes", [])]
+
+
+_ID_IN_LINK = re.compile(r"/id/(\d+)")
+
+
+def parse_injuries(inj: dict) -> list[dict]:
+    """Current injury list: one row per player with ESPN status and fantasy status.
+
+    The injuries endpoint omits athlete ids, so they are read from the player-card link.
+    """
+    out = []
+    for t in inj.get("injuries", []):
+        for i in t.get("injuries", []):
+            ath = i.get("athlete", {})
+            pid = ath.get("id")
+            if not pid:
+                for link in ath.get("links", []):
+                    m = _ID_IN_LINK.search(link.get("href", ""))
+                    if m:
+                        pid = m.group(1)
+                        break
+            details = i.get("details") or {}
+            out.append({
+                "team_id": str(t.get("id", "")), "player_id": pid, "player": ath.get("displayName", ""),
+                "status": i.get("status", ""),
+                "fantasy": (details.get("fantasyStatus") or {}).get("abbreviation", ""),
+                "return_date": details.get("returnDate"),
+                "comment": i.get("shortComment", ""),
+            })
+    return out
+
+
+def injury_class(row: dict) -> str:
+    """'out', 'doubtful', 'questionable' or 'active' from an injury row."""
+    s = f"{row.get('status', '')} {row.get('fantasy', '')}".lower()
+    if "out" in s or "suspen" in s:
+        return "out"
+    if "doubt" in s:
+        return "doubtful"
+    if any(k in s for k in ("question", "day-to-day", "gtd", "probable")):
+        return "questionable"
+    return "active"
+
+
+def scoreboard_spread(event: dict) -> float | None:
+    """Home-team spread from a scoreboard event's odds, if ESPN has one (negative = home favoured)."""
+    comp = event["competitions"][0]
+    for o in comp.get("odds") or []:
+        sp = o.get("spread")
+        if sp is None:
+            continue
+        # ESPN quotes `spread` from the home side; confirm with the favourite flag when present.
+        home = o.get("homeTeamOdds") or {}
+        if home.get("favorite") is True and sp > 0:
+            sp = -sp
+        if home.get("favorite") is False and (o.get("awayTeamOdds") or {}).get("favorite") and sp < 0:
+            sp = -sp
+        return float(sp)
+    return None

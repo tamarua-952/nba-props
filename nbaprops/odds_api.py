@@ -107,3 +107,74 @@ class OddsAPI:
             "markets": ",".join(self.cfg["markets"]),
             "oddsFormat": "decimal",
         })
+
+    def can_afford(self, kind: str, n_calls: int) -> bool:
+        """Whether n_calls of this kind fit above the reserve (uses the quota if no call yet this month)."""
+        rem = self.remaining()
+        if rem is None:
+            rem = self.cfg["monthly_quota"]
+        return rem - n_calls * self.estimated_cost(kind) >= self.cfg["reserve"]
+
+
+# ---------------------------------------------------------------- matching and consensus
+
+
+def _nickname(team_name: str) -> str:
+    """Last word of a team name ('Los Angeles Clippers' and 'LA Clippers' -> 'clippers')."""
+    return team_name.strip().split()[-1].lower()
+
+
+def match_event(events: list[dict], home_name: str, away_name: str, start_utc: str) -> dict | None:
+    """Find the Odds API event for an ESPN game by team nicknames and start time (within 6 h)."""
+    start = dt.datetime.fromisoformat(start_utc.replace("Z", "+00:00"))
+    for e in events:
+        if _nickname(e["home_team"]) != _nickname(home_name) or _nickname(e["away_team"]) != _nickname(away_name):
+            continue
+        t = dt.datetime.fromisoformat(e["commence_time"].replace("Z", "+00:00"))
+        if abs((t - start).total_seconds()) <= 6 * 3600:
+            return e
+    return None
+
+
+def norm_name(name: str) -> str:
+    import re
+    import unicodedata
+
+    s = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().lower()
+    s = re.sub(r"\b(jr|sr|ii|iii|iv)\b\.?", "", s)
+    return re.sub(r"[^a-z]", "", s)
+
+
+MARKETS = {"player_points": "PTS", "player_rebounds": "REB"}
+
+
+def consensus(event_odds: dict) -> dict:
+    """{(norm player name, 'PTS'|'REB'): {line, over_price, under_price, books}} across bookmakers.
+
+    The consensus line is the most common line (ties: the median); prices are
+    averaged over books quoting that line.
+    """
+    quotes: dict = {}
+    for b in event_odds.get("bookmakers", []):
+        for m in b.get("markets", []):
+            mk = MARKETS.get(m["key"])
+            if not mk:
+                continue
+            for o in m.get("outcomes", []):
+                if o.get("point") is None or not o.get("description"):
+                    continue
+                k = (norm_name(o["description"]), mk)
+                quotes.setdefault(k, []).append((b["key"], float(o["point"]), o["name"].lower(), float(o["price"])))
+    out = {}
+    for k, qs in quotes.items():
+        lines = [q[1] for q in qs]
+        counts = {ln: lines.count(ln) for ln in set(lines)}
+        top = max(counts.values())
+        cands = sorted(ln for ln, c in counts.items() if c == top)
+        line = cands[len(cands) // 2]
+        over = [q[3] for q in qs if q[1] == line and q[2] == "over"]
+        under = [q[3] for q in qs if q[1] == line and q[2] == "under"]
+        out[k] = {"line": line, "over_price": sum(over) / len(over) if over else None,
+                  "under_price": sum(under) / len(under) if under else None,
+                  "books": len({q[0] for q in qs if q[1] == line})}
+    return out

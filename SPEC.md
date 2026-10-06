@@ -89,7 +89,10 @@ Do a walk-forward backtest on the 2025–26 season before any live use:
 * **The backtest measures calibration only, not edge.** There are no free historical prop lines, so it cannot show the model beats the market. Edge is measured live, by CLV against the proxy closing line, in the paper ledger.
 * Because there are no historical lines, calibration is checked at a proxy line built from the player's last-10 average, in two versions: nearest x.5 (no pushes) and nearest 0.5 (whole lines push). The over/under split of picks is reported for both.
 * Earlier seasons (2024–25) are replayed first as history; calibration is reported on 2025–26.
-* **Points recalibration**: points probabilities are shrunk toward 50% by a factor fitted walk-forward (each date uses only earlier dates' results). **Gate**: points go into the brief only if the calibrated pick-side buckets 60–65%, 65–70% and 70–75% are each within about 2pp of their hit rate; otherwise the brief is rebounds-only.
+* **Recalibration** (walk-forward: each date's correction is fitted only on earlier dates' results, at the nearest-x.5 proxy line): P(over) → 0.5 + s·(P − 0.5) + c.
+  * **Points**: shrink `s` (fitted ≈0.75), no offset (tested; no gain), then **capped at 70%**.
+  * **Rebounds**: over/under offset `c` only (fitted ≈ −0.02, i.e. toward unders), no shrink.
+* **Gate**: points go into the brief only if the calibrated pick-side buckets 60–65%, 65–70% and 70–75% are each within about 2pp of their hit rate; otherwise the brief is rebounds-only. With the settings above both markets pass (see `output/backtest/calibration_2026.md`).
 
 ## Season start
 

@@ -31,11 +31,14 @@ backtest:
     - {season: 2025, start: 2024-10-22, end: 2025-04-13}
     - {season: 2026, start: 2025-10-21, end: 2026-04-12}
   evaluate_season: 2026
+  min_prior_games: 5         # player needs this many prior games (any season) to be projected
+  min_proj_minutes: 20       # props are only offered on rotation players
 
 calibration:
-  # Points probabilities are shrunk toward 50% by a walk-forward-fitted factor.
-  points_shrink: true
-  # Points go in the brief only if calibrated pick-side buckets 60-75% are within this.
-  points_gate_pp: 0.02
-  min_prior_games: 5         # player needs this many prior games to be projected
-  min_proj_minutes: 20       # props are only offered on rotation players
+  # Walk-forward recalibration of P(over): q' = 0.5 + s*(q-0.5) + c, capped.
+  # s (shrink toward 50%) and c (over/under offset) are refitted each date from
+  # earlier results only. See nbaprops/calibrate.py.
+  PTS: {shrink: true, offset: false, cap: 0.70}   # offset tested: no gain (log loss 0.6773 vs 0.6771)
+  REB: {shrink: false, offset: true, cap: null}   # offset fixes over-side overstatement
+  min_obs: 2000
+  gate_pp: 0.02              # points go in the brief only if calibrated 60-75% buckets are within this
