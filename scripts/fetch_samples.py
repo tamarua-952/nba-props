@@ -25,7 +25,13 @@ def main() -> None:
     f.get_json(f"{SITE}/injuries", name="injuries")
     f.get_json(f"{SITE}/teams", name="teams")
     f.get_json(f"{SITE}/teams/7/roster", name="roster_7")
-    f.get_json(f"{SITE}/scoreboard", {"dates": "20251021-20251031", "limit": 1000}, name="scoreboard_range")
+    # Date ranges would cut the season schedule pull to a few calls; check whether ESPN accepts them.
+    for limit in (100, 300):
+        try:
+            f.get_json(f"{SITE}/scoreboard", {"dates": "20251021-20251031", "limit": limit},
+                       name=f"scoreboard_range_{limit}")
+        except Exception as e:  # noqa: BLE001
+            print(f"date range limit={limit}: {e}")
     for p in sorted((ROOT / "tests" / "fixtures" / "espn").glob("*.gz")):
         print(p.name, p.stat().st_size)
 

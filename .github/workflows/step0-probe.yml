@@ -35,10 +35,12 @@ jobs:
       - name: Fetch ESPN parser fixtures
         run: python scripts/fetch_samples.py
       - name: Commit results
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add output/step0 tests/fixtures
+          git add output/step0
+          [ -d tests/fixtures ] && git add tests/fixtures
           [ -f data/odds_api_usage.json ] && git add data/odds_api_usage.json
           git diff --cached --quiet && exit 0
           git commit -m "Step 0 probe report and ESPN fixtures (GitHub Actions)"
