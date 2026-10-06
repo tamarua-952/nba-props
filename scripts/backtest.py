@@ -95,8 +95,8 @@ def run(season: int, min_prior: int, min_minutes: float) -> pd.DataFrame:
 
     proj = pd.DataFrame(out)
     print("learned pass-through (end of season):",
-          {k: round(lg.pass_through(k), 3) for k in ("min", "pts", "reb")},
-          "variance inflation:", {k: round(lg.var_inflation(k), 3) for k in ("pts", "reb")})
+          {k: round(float(lg.pass_through(k)), 3) for k in ("min", "pts", "reb")},
+          "variance inflation:", {k: round(float(lg.var_inflation(k)), 3) for k in ("pts", "reb")})
     actual = players[["game_id", "player_id", "player", "min", "pts", "reb"]].rename(
         columns={"min": "act_min", "pts": "act_pts", "reb": "act_reb"})
     proj = proj.merge(actual, on=["game_id", "player_id"], how="left")
