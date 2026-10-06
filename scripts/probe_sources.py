@@ -1,7 +1,8 @@
 """Step 0: probe every candidate free data source and report what works.
 
 Run from GitHub Actions and from a home connection; cloud IPs are often
-blocked by stats.nba.com and some odds sites, so results differ by network.
+blocked by some sources, so results differ by network. nba_api / stats.nba.com
+was dropped after the first run (it timed out from GitHub Actions; see SPEC.md).
 
     python scripts/probe_sources.py --label local
 
@@ -16,6 +17,7 @@ import datetime as dt
 import json
 import os
 import re
+import sys
 import time
 import traceback
 from dataclasses import asdict, dataclass, field
@@ -24,6 +26,8 @@ from typing import Callable
 
 import requests
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 TIMEOUT = 30
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
@@ -31,10 +35,7 @@ UA = (
 )
 # A known completed regular-season date and player used for historical checks.
 PAST_DATE = dt.date(2026, 3, 15)
-JOKIC_NBA_ID = 203999
 JOKIC_ESPN_ID = 3112335
-SEASON = "2025-26"
-PREV_SEASON = "2024-25"
 
 ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba"
 ESPN_CORE = "https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba"
@@ -70,48 +71,12 @@ class Skip(Exception):
 # ---------------------------------------------------------------- game logs
 
 
-def nba_api_league_gamelog(season: str):
-    def check():
-        from nba_api.stats.endpoints import leaguegamelog
-
-        df = leaguegamelog.LeagueGameLog(
-            season=season, player_or_team_abbreviation="P", timeout=TIMEOUT
-        ).get_data_frames()[0]
-        assert len(df) > 1000, f"only {len(df)} rows"
-        cols = {"PLAYER_ID", "MIN", "PTS", "REB", "GAME_DATE", "MATCHUP"}
-        missing = cols - set(df.columns)
-        assert not missing, f"missing cols {missing}"
-        return f"{len(df)} player-game rows, {df.GAME_DATE.min()}..{df.GAME_DATE.max()}"
-
-    return check
 
 
-def nba_api_player_gamelog():
-    from nba_api.stats.endpoints import playergamelog
-
-    df = playergamelog.PlayerGameLog(
-        player_id=JOKIC_NBA_ID, season=SEASON, timeout=TIMEOUT
-    ).get_data_frames()[0]
-    assert len(df) > 10, f"only {len(df)} rows"
-    return f"Jokic {SEASON}: {len(df)} games, last {df.iloc[0].GAME_DATE} PTS={df.iloc[0].PTS}"
 
 
-def nba_api_team_pace():
-    from nba_api.stats.endpoints import leaguedashteamstats
-
-    df = leaguedashteamstats.LeagueDashTeamStats(
-        season=SEASON, measure_type_detailed_defense="Advanced", timeout=TIMEOUT
-    ).get_data_frames()[0]
-    assert "PACE" in df.columns and len(df) == 30, f"{len(df)} rows"
-    return f"30 teams, pace {df.PACE.min():.1f}-{df.PACE.max():.1f}"
 
 
-def nba_api_player_index():
-    from nba_api.stats.endpoints import playerindex
-
-    df = playerindex.PlayerIndex(season=SEASON, timeout=TIMEOUT).get_data_frames()[0]
-    assert len(df) > 300, f"only {len(df)} rows"
-    return f"{len(df)} players with POSITION (e.g. {df.iloc[0].POSITION!r})"
 
 
 def nba_cdn_boxscore():
@@ -180,13 +145,6 @@ def nba_cdn_today():
     return f"gameDate {sb['gameDate']}: {len(sb['games'])} games"
 
 
-def nba_api_scoreboard_v3():
-    from nba_api.stats.endpoints import scoreboardv3
-
-    today = dt.datetime.now(dt.timezone.utc).date().isoformat()
-    sb = scoreboardv3.ScoreboardV3(game_date=today, timeout=TIMEOUT).get_dict()
-    games = sb["scoreboard"]["games"]
-    return f"{today}: {len(games)} games"
 
 
 def espn_scoreboard_today():
@@ -238,34 +196,37 @@ def espn_injuries_api():
 
 
 def espn_injuries_page():
-    r = get("https://www.espn.com/nba/injuries")
+    r = get("https://www.espn.com/nba/injuries", headers={"Accept": "text/html"})
     r.raise_for_status()
     n = r.text.count("Table__TR")
-    return f"HTML {len(r.text)//1024} KB, ~{n} table rows"
+    # A 200 with an empty or near-empty body is a failure, not a pass.
+    assert len(r.content) > 20_000, f"body only {len(r.content)} bytes"
+    assert n > 0, f"no injury table rows in {len(r.content)//1024} KB"
+    return f"HTML {len(r.content)//1024} KB, ~{n} table rows"
 
 
 # ---------------------------------------------------------------- consensus lines
 
 
 def odds_api():
-    key = os.environ.get("ODDS_API_KEY")
-    if not key:
+    """Measures the real credit cost of the two calls the pipeline will make."""
+    if not os.environ.get("ODDS_API_KEY"):
         raise Skip("ODDS_API_KEY not set (free tier: 500 credits/month at the-odds-api.com)")
-    base = "https://api.the-odds-api.com/v4/sports/basketball_nba"
-    r = get(f"{base}/events", params={"apiKey": key})
-    r.raise_for_status()
-    events = r.json()
-    msg = f"{len(events)} upcoming events"
+    from nbaprops.odds_api import OddsAPI
+
+    api = OddsAPI()
+    events = api.events()
+    ev_call = api.usage["calls"][-1]
+    msg = f"/events: {len(events)} events, cost {ev_call['cost']} credits"
     if events:
-        r = get(
-            f"{base}/events/{events[0]['id']}/odds",
-            params={"apiKey": key, "regions": "us,au", "markets": "player_points,player_rebounds"},
-        )
-        r.raise_for_status()
-        books = r.json().get("bookmakers", [])
+        data = api.event_props(events[0]["id"])
+        call = api.usage["calls"][-1]
+        books = data.get("bookmakers", [])
         n = sum(len(m["outcomes"]) for b in books for m in b["markets"])
-        msg += f"; event 0: {len(books)} books, {n} prop outcomes"
-    return msg + f"; credits remaining {r.headers.get('x-requests-remaining')}"
+        mkts = sorted({m["key"] for b in books for m in b["markets"]})
+        msg += (f"; event props ({events[0]['away_team']} @ {events[0]['home_team']}): cost {call['cost']} credits, "
+                f"{len(books)} books, {n} outcomes, markets {mkts}")
+    return msg + f"; used {api.usage['calls'][-1]['used']}, remaining {api.remaining()}"
 
 
 def espn_prop_bets():
@@ -307,18 +268,12 @@ def underdog():
 
 
 CHECKS: list[tuple[str, str, Callable[[], str]]] = [
-    ("Game logs", f"nba_api LeagueGameLog {SEASON} (all players, 1 call)", nba_api_league_gamelog(SEASON)),
-    ("Game logs", f"nba_api LeagueGameLog {PREV_SEASON}", nba_api_league_gamelog(PREV_SEASON)),
-    ("Game logs", "nba_api PlayerGameLog", nba_api_player_gamelog),
-    ("Game logs", "nba_api team pace (Advanced)", nba_api_team_pace),
-    ("Game logs", "nba_api PlayerIndex (positions)", nba_api_player_index),
     ("Game logs", "NBA CDN box score JSON", nba_cdn_boxscore),
     ("Game logs", "ESPN scoreboard + summary box score", espn_past_boxscore),
     ("Game logs", "ESPN athlete gamelog", espn_athlete_gamelog),
     ("Game logs", "Basketball-Reference player gamelog", bbref_gamelog),
     ("Schedule", "NBA CDN season schedule", nba_cdn_schedule),
     ("Schedule", "NBA CDN today's scoreboard", nba_cdn_today),
-    ("Schedule", "nba_api ScoreboardV3 today", nba_api_scoreboard_v3),
     ("Schedule", "ESPN scoreboard today/tomorrow (+spreads)", espn_scoreboard_today),
     ("Injuries", "Official NBA injury report (PDF)", nba_official_injury_report),
     ("Injuries", "ESPN injuries JSON", espn_injuries_api),

@@ -1,0 +1,30 @@
+# NBA Props Analyst configuration. See SPEC.md.
+
+markets: [PTS, REB]
+
+pricing:
+  margin_buffer: 0.05        # bet threshold = fair price * (1 + buffer)
+  typical_market_price: 1.87 # used to rank picks by edge
+  max_picks: 8
+  min_picks: 5
+
+sources:
+  espn:
+    min_interval_s: 0.5      # polite spacing between ESPN requests
+  bbref:
+    min_interval_s: 3.5      # stays under Basketball-Reference's 20 req/min
+  cache_dir: data/raw
+
+odds_api:
+  regions: us
+  markets: [player_points, player_rebounds]
+  monthly_quota: 500         # free tier
+  reserve: 40                # stop once remaining credits would drop below this
+  usage_file: data/odds_api_usage.json
+
+backtest:
+  season: 2026               # ESPN season year: 2026 = 2025-26
+  start: 2025-10-21
+  end: 2026-04-12
+  min_prior_games: 5         # player needs this many prior games to be projected
+  min_proj_minutes: 20       # props are only offered on rotation players

@@ -25,6 +25,26 @@ Write a small script that tests each candidate source from GitHub Actions (cloud
 
 Do not build further until Step 0 reports which sources are reliable.
 
+### Step 0 outcome (GitHub Actions, 2026-10-06) and source decisions
+
+Report: `output/step0/source_report_github-actions.md`.
+
+* `nba_api` / stats.nba.com timed out and cdn.nba.com returned 403 from GitHub Actions. **Treat `nba_api` as unavailable.** It is not used anywhere in the pipeline.
+* **ESPN's public JSON is the primary source** for schedule, box scores, player game logs, rosters/positions, game spreads and injuries.
+* **Basketball-Reference is for gap filling only** (e.g. a box score ESPN is missing), always under its rate limit (<20 requests/minute; the fetcher spaces requests ≥3.5 s apart).
+* **Cache every raw response** gzipped, exactly as received (`data/raw/<source>/`). Completed games and past dates are never refetched.
+* **If ESPN fails** (after retries) on the run's required data, the brief says **"Data source down, no picks"** and contains no picks. No partial or stale-data picks.
+* The official NBA injury report PDF was not found during preseason. ESPN injuries is the injury source; recheck the official report after opening night.
+* PrizePicks (403) and Underdog (426) are unusable. ESPN propBets had no props for a preseason game; not relied on.
+
+### The Odds API (free tier, `ODDS_API_KEY` secret)
+
+* Used **only for games that have picks**, and never as a model input. Two uses:
+  1. One morning call per pick's game, for `CONSENSUS_GAP`.
+  2. One call per pick's game near tip-off, as a **proxy closing line** for CLV.
+* The real credit cost of each call type is measured from the API's response headers (`x-requests-last`, `x-requests-remaining`) and logged to `data/odds_api_usage.json`.
+* **Monthly budget guard**: before each call, estimate its cost from the largest cost observed for that call type. Refuse the call if it would take the remaining balance below a reserve (`odds_api.reserve` in `config.yaml`), so usage stops before the 500-credit monthly limit. A refused call means the pick goes out without `CONSENSUS_GAP` checking / without a closing line, and the brief says so.
+
 ## Pipeline
 
 1. Ingest today's NBA slate, player game logs (this season and last season), team pace, opponent defence by position, and injury statuses.
@@ -45,7 +65,7 @@ Do not build further until Step 0 reports which sources are reliable.
 5. Fair odds. Fair price = 1 / P. Bet threshold = the fair price plus a margin buffer (start at +5%, configurable).
 6. Flags. Mark each pick with:
    * `INJURY_PENDING`: a key player is questionable and the pick depends on his status
-   * `CONSENSUS_GAP`: the model's line or probability is far from the free consensus line (likely a model error or missing news)
+   * `CONSENSUS_GAP`: the model's line or probability is far from The Odds API consensus line (likely a model error or missing news)
 7. Rank. Sort by model edge versus a typical market price (implied probability around 52–53% at ~$1.87). Keep the top 5–8 only.
 
 ## Outputs
@@ -66,7 +86,8 @@ Do a walk-forward backtest on the 2025–26 season before any live use:
 
 * Use only information available before each game.
 * Report calibration buckets (does a model 60% hit about 60% of the time?).
-* Compare projections against historical closing lines where available.
+* **The backtest measures calibration only, not edge.** There are no free historical prop lines, so it cannot show the model beats the market. Edge is measured live, by CLV against the proxy closing line, in the paper ledger.
+* Because there are no historical lines, calibration is checked at a set of lines around each projection, using box-score data pulled from ESPN and cached.
 
 ## Automation
 
@@ -75,6 +96,7 @@ Do a walk-forward backtest on the 2025–26 season before any live use:
 
 ## Tech
 
-* Python 3.11 with pandas, numpy, scipy and nba_api.
+* Python 3.11 with pandas, numpy, scipy and requests (ESPN JSON). No `nba_api`.
+* Every workflow that commits to the repo shares one concurrency group, so runs queue instead of racing each other's pushes.
 * Tests for the probability and fair-odds maths.
 * Configuration (thresholds, buffer, markets) in `config.yaml`.
