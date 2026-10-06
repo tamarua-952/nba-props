@@ -1,0 +1,229 @@
+{
+ "season": 2026,
+ "scheduled_completed": 1235,
+ "games": 1235,
+ "player_rows": 32294,
+ "espn_gaps": 43,
+ "bbref_filled": [
+  "401810126",
+  "401810144",
+  "401810150",
+  "401810169",
+  "401810184",
+  "401810200",
+  "401810216",
+  "401810344",
+  "401810358",
+  "401810372",
+  "401810401",
+  "401810458",
+  "401810469",
+  "401810486",
+  "401810502",
+  "401810516",
+  "401810527",
+  "401850920",
+  "401810547",
+  "401810560",
+  "401810577",
+  "401810591",
+  "401810607",
+  "401810617",
+  "401810633",
+  "401810652",
+  "401810680",
+  "401810691",
+  "401810708",
+  "401810725",
+  "401810744",
+  "401810760",
+  "401810785",
+  "401810815",
+  "401810823",
+  "401810842",
+  "401810857",
+  "401810866",
+  "401810897",
+  "401810908",
+  "401810925",
+  "401810934",
+  "401810949"
+ ],
+ "failures": [
+  {
+   "game_id": "401810126",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810144",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810150",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810169",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810184",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810200",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810216",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810344",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810358",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810372",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810401",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810458",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810469",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810486",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810502",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810516",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810527",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401850920",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810547",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810560",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810577",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810591",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810607",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810617",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810633",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810652",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810680",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810691",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810708",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810725",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810744",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810760",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810785",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810815",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810823",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810842",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810857",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810866",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810897",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810908",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810925",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810934",
+   "error": "KeyError('id')"
+  },
+  {
+   "game_id": "401810949",
+   "error": "KeyError('id')"
+  }
+ ],
+ "espn_network_calls": 1409,
+ "bbref_network_calls": 43,
+ "games_with_spread": 937
+}
