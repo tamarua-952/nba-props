@@ -8,6 +8,17 @@ pricing:
   max_picks: 8
   min_picks: 5
 
+brief:
+  min_edge: 0.0              # model prob minus the typical price's implied prob (1/1.87)
+  key_player_minutes: 24     # a questionable teammate this regular triggers INJURY_PENDING
+  min_minutes_to_tip: 30     # skip games tipping within this many minutes of the run
+  consensus_gap:             # CONSENSUS_GAP when the consensus line is this far from ours,
+    PTS: 2.0                 # or the model's side loses at the consensus line,
+    REB: 1.5                 # or model vs no-vig market prob differ by `prob`
+    prob: 0.15
+  ladder_width: {PTS: 5, REB: 3}   # half-point lines either side of the projection
+  closing_lookahead_min: 60  # closing-line call once a pick game tips within this window
+
 sources:
   espn:
     min_interval_s: 0.5      # polite spacing between ESPN requests

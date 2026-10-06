@@ -1,0 +1,50 @@
+name: Closing lines
+
+# Every 30 minutes from 20:00 to 05:30 UTC (NZ morning to evening): one Odds API
+# call per top pick game once it tips within the lookahead window.
+on:
+  schedule:
+    - cron: "*/30 20-23 * * *"
+    - cron: "*/30 0-5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repo-writer-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  closing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip quickly when no pick game is planned today
+        id: plan
+        run: |
+          f="data/picks/$(TZ=Pacific/Auckland date +%Y-%m-%d).json"
+          if [ -f "$f" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; else echo "No plan $f"; fi
+      - uses: actions/setup-python@v5
+        if: steps.plan.outputs.run == 'true'
+        with:
+          python-version: "3.11"
+          cache: pip
+      - if: steps.plan.outputs.run == 'true'
+        run: pip install -r requirements.txt
+      - name: Closing-line calls
+        if: steps.plan.outputs.run == 'true'
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python scripts/closing_lines.py
+      - name: Commit
+        if: steps.plan.outputs.run == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ledger.csv data/picks data/odds data/odds_api_usage.json 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Closing lines $(TZ=Pacific/Auckland date "+%Y-%m-%d %H:%M")"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"

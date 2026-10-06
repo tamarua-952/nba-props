@@ -1,0 +1,9 @@
+date,game_id,tip_nzt,player_id,player,team,opp,market,side,line,projection,model_prob,fair_odds,threshold,flags,consensus_line,betcha_line,betcha_price,closing_line,closing_over_price,closing_under_price,actual,result,pl_units,paper_pl_units,clv_pct,clv_line
+2026-03-11,401810799,Wed 11 Mar 15:00 NZT,5105565,Donovan Clingan,POR,CHA,REB,under,12.5,8.9,0.8229,1.22,1.28,,,,,,,,11,WIN,,0.28,,
+2026-03-11,401810792,Wed 11 Mar 12:30 NZT,6440,Tobias Harris,DET,BKN,REB,under,6.5,4.8,0.7765,1.29,1.35,,,,,,,,2,WIN,,0.35,,
+2026-03-11,401810801,Wed 11 Mar 16:00 NZT,4431671,Jaden McDaniels,MIN,LAL,REB,under,5.5,4.0,0.7743,1.29,1.36,,,,,,,,2,WIN,,0.36,,
+2026-03-11,401810793,Wed 11 Mar 12:30 NZT,5174563,Kyshawn George,WSH,MIA,REB,over,2.5,4.3,0.7399,1.35,1.42,,,,,,,,,VOID,,0.0,,
+2026-03-11,401810792,Wed 11 Mar 12:30 NZT,4278104,Michael Porter Jr.,BKN,DET,REB,under,7.5,6.0,0.7379,1.36,1.42,,,,,,,,2,WIN,,0.42,,
+2026-03-11,401810791,Wed 11 Mar 12:00 NZT,4684806,Taylor Hendricks,MEM,PHI,REB,under,5.5,4.3,0.7359,1.36,1.43,,,,,,,,5,WIN,,0.43,,
+2026-03-11,401810794,Wed 11 Mar 12:30 NZT,4280151,Corey Kispert,ATL,DAL,REB,under,3.5,2.7,0.7299,1.37,1.44,,,,,,,,0,WIN,,0.44,,
+2026-03-11,401810799,Wed 11 Mar 15:00 NZT,4578893,Vit Krejci,POR,CHA,REB,under,3.5,2.6,0.7296,1.37,1.44,,,,,,,,3,WIN,,0.44,,

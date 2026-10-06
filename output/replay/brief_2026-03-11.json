@@ -1,0 +1,572 @@
+{
+ "brief_date_nzt": "2026-03-11",
+ "slate_date_et": "2026-03-10",
+ "generated_at_utc": "2026-03-10T20:00+00:00",
+ "status": "OK",
+ "message": "",
+ "games": 11,
+ "games_playable": 11,
+ "candidates": 244,
+ "markets": [
+  "PTS",
+  "REB"
+ ],
+ "calibration": {
+  "PTS": {
+   "shrink": 0.73,
+   "offset": 0.0,
+   "cap": 0.7
+  },
+  "REB": {
+   "shrink": 1.0,
+   "offset": -0.0125,
+   "cap": null
+  }
+ },
+ "margin_buffer": 0.05,
+ "odds_api": {
+  "top_games": [
+   "401810799",
+   "401810792",
+   "401810801"
+  ],
+  "morning_calls": 0,
+  "skipped_morning": false,
+  "note": "Odds API not used (no key, or replay mode)."
+ },
+ "picks": [
+  {
+   "game_id": "401810799",
+   "tip_utc": "2026-03-11T02:00Z",
+   "tip_nzt": "Wed 11 Mar 15:00 NZT",
+   "player_id": "5105565",
+   "player": "Donovan Clingan",
+   "team": "POR",
+   "opp": "CHA",
+   "home": true,
+   "market": "REB",
+   "side": "under",
+   "line": 12.5,
+   "projection": 8.9,
+   "proj_min": 26.5,
+   "last10_avg": 12.1,
+   "model_prob": 0.8229,
+   "edge": 0.2881,
+   "fair_odds": 1.22,
+   "threshold": 1.28,
+   "ladder": [
+    {
+     "line": 5.5,
+     "side": "over",
+     "model_prob": 0.7601,
+     "threshold": 1.38
+    },
+    {
+     "line": 6.5,
+     "side": "over",
+     "model_prob": 0.6678,
+     "threshold": 1.57
+    },
+    {
+     "line": 7.5,
+     "side": "over",
+     "model_prob": 0.5706,
+     "threshold": 1.84
+    },
+    {
+     "line": 8.5,
+     "side": "under",
+     "model_prob": 0.5254,
+     "threshold": 2.0
+    },
+    {
+     "line": 9.5,
+     "side": "under",
+     "model_prob": 0.6153,
+     "threshold": 1.71
+    },
+    {
+     "line": 10.5,
+     "side": "under",
+     "model_prob": 0.6957,
+     "threshold": 1.51
+    },
+    {
+     "line": 11.5,
+     "side": "under",
+     "model_prob": 0.7651,
+     "threshold": 1.37
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 8.9 reb in 26 min vs last-10 avg 12.1; opp allows -21% reb to Cs; pace -4%.",
+   "consensus": null
+  },
+  {
+   "game_id": "401810792",
+   "tip_utc": "2026-03-10T23:30Z",
+   "tip_nzt": "Wed 11 Mar 12:30 NZT",
+   "player_id": "6440",
+   "player": "Tobias Harris",
+   "team": "DET",
+   "opp": "BKN",
+   "home": false,
+   "market": "REB",
+   "side": "under",
+   "line": 6.5,
+   "projection": 4.8,
+   "proj_min": 29.3,
+   "last10_avg": 6.4,
+   "model_prob": 0.7765,
+   "edge": 0.2417,
+   "fair_odds": 1.29,
+   "threshold": 1.35,
+   "ladder": [
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.9088,
+     "threshold": 1.16
+    },
+    {
+     "line": 2.5,
+     "side": "over",
+     "model_prob": 0.7965,
+     "threshold": 1.32
+    },
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.6474,
+     "threshold": 1.62
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.5122,
+     "threshold": 2.05
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.6581,
+     "threshold": 1.6
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.7765,
+     "threshold": 1.35
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.8637,
+     "threshold": 1.22
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 4.8 reb in 29 min vs last-10 avg 6.4; opp allows -13% reb to Fs; pace -2%; 2 teammate regular(s) out; spread -15.5 (blowout risk).",
+   "consensus": null
+  },
+  {
+   "game_id": "401810801",
+   "tip_utc": "2026-03-11T03:00Z",
+   "tip_nzt": "Wed 11 Mar 16:00 NZT",
+   "player_id": "4431671",
+   "player": "Jaden McDaniels",
+   "team": "MIN",
+   "opp": "LAL",
+   "home": false,
+   "market": "REB",
+   "side": "under",
+   "line": 5.5,
+   "projection": 4.0,
+   "proj_min": 31.3,
+   "last10_avg": 5.2,
+   "model_prob": 0.7743,
+   "edge": 0.2395,
+   "fair_odds": 1.29,
+   "threshold": 1.36,
+   "ladder": [
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.8604,
+     "threshold": 1.22
+    },
+    {
+     "line": 2.5,
+     "side": "over",
+     "model_prob": 0.7068,
+     "threshold": 1.49
+    },
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.528,
+     "threshold": 1.99
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.6397,
+     "threshold": 1.64
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.7743,
+     "threshold": 1.36
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.8702,
+     "threshold": 1.21
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.9324,
+     "threshold": 1.13
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 4.0 reb in 31 min vs last-10 avg 5.2; opp allows -9% reb to Fs.",
+   "consensus": null
+  },
+  {
+   "game_id": "401810793",
+   "tip_utc": "2026-03-10T23:30Z",
+   "tip_nzt": "Wed 11 Mar 12:30 NZT",
+   "player_id": "5174563",
+   "player": "Kyshawn George",
+   "team": "WSH",
+   "opp": "MIA",
+   "home": false,
+   "market": "REB",
+   "side": "over",
+   "line": 2.5,
+   "projection": 4.3,
+   "proj_min": 24.9,
+   "last10_avg": 2.4,
+   "model_prob": 0.7399,
+   "edge": 0.2051,
+   "fair_odds": 1.35,
+   "threshold": 1.42,
+   "ladder": [
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.8792,
+     "threshold": 1.19
+    },
+    {
+     "line": 2.5,
+     "side": "over",
+     "model_prob": 0.7399,
+     "threshold": 1.42
+    },
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.5696,
+     "threshold": 1.84
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.5977,
+     "threshold": 1.76
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.7381,
+     "threshold": 1.42
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.8427,
+     "threshold": 1.25
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.9134,
+     "threshold": 1.15
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Over: proj 4.3 reb in 25 min vs last-10 avg 2.4; pace +3%; 2 teammate regular(s) out; spread +15.5 (blowout risk).",
+   "consensus": null
+  },
+  {
+   "game_id": "401810792",
+   "tip_utc": "2026-03-10T23:30Z",
+   "tip_nzt": "Wed 11 Mar 12:30 NZT",
+   "player_id": "4278104",
+   "player": "Michael Porter Jr.",
+   "team": "BKN",
+   "opp": "DET",
+   "home": true,
+   "market": "REB",
+   "side": "under",
+   "line": 7.5,
+   "projection": 6.0,
+   "proj_min": 30.6,
+   "last10_avg": 7.1,
+   "model_prob": 0.7379,
+   "edge": 0.2031,
+   "fair_odds": 1.36,
+   "threshold": 1.42,
+   "ladder": [
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.7979,
+     "threshold": 1.32
+    },
+    {
+     "line": 4.5,
+     "side": "over",
+     "model_prob": 0.6664,
+     "threshold": 1.58
+    },
+    {
+     "line": 5.5,
+     "side": "over",
+     "model_prob": 0.5213,
+     "threshold": 2.01
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.6182,
+     "threshold": 1.7
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.7379,
+     "threshold": 1.42
+    },
+    {
+     "line": 8.5,
+     "side": "under",
+     "model_prob": 0.8315,
+     "threshold": 1.26
+    },
+    {
+     "line": 9.5,
+     "side": "under",
+     "model_prob": 0.899,
+     "threshold": 1.17
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 6.0 reb in 31 min vs last-10 avg 7.1; opp allows -11% reb to Fs; 2 teammate regular(s) out; back-to-back; spread +15.5 (blowout risk).",
+   "consensus": null
+  },
+  {
+   "game_id": "401810791",
+   "tip_utc": "2026-03-10T23:00Z",
+   "tip_nzt": "Wed 11 Mar 12:00 NZT",
+   "player_id": "4684806",
+   "player": "Taylor Hendricks",
+   "team": "MEM",
+   "opp": "PHI",
+   "home": false,
+   "market": "REB",
+   "side": "under",
+   "line": 5.5,
+   "projection": 4.3,
+   "proj_min": 22.4,
+   "last10_avg": 5.0,
+   "model_prob": 0.7359,
+   "edge": 0.2012,
+   "fair_odds": 1.36,
+   "threshold": 1.43,
+   "ladder": [
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.8607,
+     "threshold": 1.22
+    },
+    {
+     "line": 2.5,
+     "side": "over",
+     "model_prob": 0.7171,
+     "threshold": 1.46
+    },
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.552,
+     "threshold": 1.9
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.6052,
+     "threshold": 1.74
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.7359,
+     "threshold": 1.43
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.8344,
+     "threshold": 1.26
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.9029,
+     "threshold": 1.16
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 4.3 reb in 22 min vs last-10 avg 5.0; 1 teammate regular(s) out; back-to-back.",
+   "consensus": null
+  },
+  {
+   "game_id": "401810794",
+   "tip_utc": "2026-03-10T23:30Z",
+   "tip_nzt": "Wed 11 Mar 12:30 NZT",
+   "player_id": "4280151",
+   "player": "Corey Kispert",
+   "team": "ATL",
+   "opp": "DAL",
+   "home": true,
+   "market": "REB",
+   "side": "under",
+   "line": 3.5,
+   "projection": 2.7,
+   "proj_min": 20.9,
+   "last10_avg": 3.2,
+   "model_prob": 0.7299,
+   "edge": 0.1951,
+   "fair_odds": 1.37,
+   "threshold": 1.44,
+   "ladder": [
+    {
+     "line": 0.5,
+     "side": "over",
+     "model_prob": 0.9051,
+     "threshold": 1.16
+    },
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.7122,
+     "threshold": 1.47
+    },
+    {
+     "line": 2.5,
+     "side": "under",
+     "model_prob": 0.5253,
+     "threshold": 2.0
+    },
+    {
+     "line": 3.5,
+     "side": "under",
+     "model_prob": 0.7299,
+     "threshold": 1.44
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.8683,
+     "threshold": 1.21
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.9466,
+     "threshold": 1.11
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 2.7 reb in 21 min vs last-10 avg 3.2; 1 teammate regular(s) out; spread -9.5 (blowout risk).",
+   "consensus": null
+  },
+  {
+   "game_id": "401810799",
+   "tip_utc": "2026-03-11T02:00Z",
+   "tip_nzt": "Wed 11 Mar 15:00 NZT",
+   "player_id": "4578893",
+   "player": "Vit Krejci",
+   "team": "POR",
+   "opp": "CHA",
+   "home": true,
+   "market": "REB",
+   "side": "under",
+   "line": 3.5,
+   "projection": 2.6,
+   "proj_min": 21.0,
+   "last10_avg": 3.8,
+   "model_prob": 0.7296,
+   "edge": 0.1949,
+   "fair_odds": 1.37,
+   "threshold": 1.44,
+   "ladder": [
+    {
+     "line": 0.5,
+     "side": "over",
+     "model_prob": 0.8646,
+     "threshold": 1.21
+    },
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.656,
+     "threshold": 1.6
+    },
+    {
+     "line": 2.5,
+     "side": "under",
+     "model_prob": 0.5579,
+     "threshold": 1.88
+    },
+    {
+     "line": 3.5,
+     "side": "under",
+     "model_prob": 0.7296,
+     "threshold": 1.44
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.8482,
+     "threshold": 1.24
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.9222,
+     "threshold": 1.14
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 2.6 reb in 21 min vs last-10 avg 3.8; pace -4%.",
+   "consensus": null
+  }
+ ],
+ "mode": "replay: injuries and Odds API not available for past dates"
+}

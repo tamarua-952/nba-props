@@ -1,0 +1,55 @@
+name: Daily brief
+
+# 09:00 NZT. GitHub cron is UTC-only, so run at both 20:00 UTC (09:00 NZDT)
+# and 21:00 UTC (09:00 NZST); the script only builds a brief between 08:00
+# and 10:59 NZT and only once per NZ date, so DST changes need no edits.
+on:
+  schedule:
+    - cron: "0 20 * * *"
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Build even outside the 08:00-10:59 NZT window"
+        type: boolean
+        default: false
+      test:
+        description: "Test run: include preseason games, write to output/test/ only"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repo-writer-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Build brief (settles yesterday's ledger rows first)
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python scripts/daily.py ${{ inputs.force && '--force' || '' }} ${{ inputs.test && '--test' || '' }}
+      - name: Weekly report (Mondays NZT)
+        run: |
+          if [ "$(TZ=Pacific/Auckland date +%u)" = "1" ]; then python scripts/weekly_report.py; fi
+      - name: Commit brief, ledger and data
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add output ledger.csv data 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Daily brief $(TZ=Pacific/Auckland date +%Y-%m-%d)"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
