@@ -1,0 +1,186 @@
+{
+  "label": "github-actions",
+  "run_at_utc": "2026-10-06 01:44",
+  "results": [
+    {
+      "name": "nba_api LeagueGameLog 2025-26 (all players, 1 call)",
+      "category": "Game logs",
+      "ok": false,
+      "detail": "requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=30)",
+      "seconds": 30.5,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "nba_api LeagueGameLog 2024-25",
+      "category": "Game logs",
+      "ok": false,
+      "detail": "requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=30)",
+      "seconds": 30.2,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "nba_api PlayerGameLog",
+      "category": "Game logs",
+      "ok": false,
+      "detail": "requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=30)",
+      "seconds": 30.1,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "nba_api team pace (Advanced)",
+      "category": "Game logs",
+      "ok": false,
+      "detail": "requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=30)",
+      "seconds": 30.2,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "nba_api PlayerIndex (positions)",
+      "category": "Game logs",
+      "ok": false,
+      "detail": "requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=30)",
+      "seconds": 30.1,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "NBA CDN box score JSON",
+      "category": "Game logs",
+      "ok": false,
+      "detail": "HTTP 403 from https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json",
+      "seconds": 0.1,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "ESPN scoreboard + summary box score",
+      "category": "Game logs",
+      "ok": true,
+      "detail": "7 games on 2026-03-15; summary has 27 players, stats ['MIN', 'PTS', 'FG', '3PT', 'FT', 'REB']",
+      "seconds": 0.3,
+      "status": "OK",
+      "notes": []
+    },
+    {
+      "name": "ESPN athlete gamelog",
+      "category": "Game logs",
+      "ok": true,
+      "detail": "Jokic gamelog: 76 events, labels ['MIN', 'FG', 'FG%', '3PT', '3P%', 'FT']",
+      "seconds": 0.3,
+      "status": "OK",
+      "notes": []
+    },
+    {
+      "name": "Basketball-Reference player gamelog",
+      "category": "Game logs",
+      "ok": true,
+      "detail": "HTML 375 KB, ~65 game rows (rate limit: <20 req/min)",
+      "seconds": 0.2,
+      "status": "OK",
+      "notes": []
+    },
+    {
+      "name": "NBA CDN season schedule",
+      "category": "Schedule",
+      "ok": false,
+      "detail": "HTTP 403 from https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json",
+      "seconds": 0.1,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "NBA CDN today's scoreboard",
+      "category": "Schedule",
+      "ok": false,
+      "detail": "HTTP 403 from https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json",
+      "seconds": 0.1,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "nba_api ScoreboardV3 today",
+      "category": "Schedule",
+      "ok": false,
+      "detail": "requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='stats.nba.com', port=443): Read timed out. (read timeout=30)",
+      "seconds": 30.2,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "ESPN scoreboard today/tomorrow (+spreads)",
+      "category": "Schedule",
+      "ok": true,
+      "detail": "2026-10-06: 4 games; 2026-10-07: 5 games; 3 with spread/total attached",
+      "seconds": 0.3,
+      "status": "OK",
+      "notes": []
+    },
+    {
+      "name": "Official NBA injury report (PDF)",
+      "category": "Injuries",
+      "ok": false,
+      "detail": "AssertionError: no PDF links on ['https://official.nba.com/nba-injury-report-2026-27-season/', 'https://official.nba.com/nba-injury-report-2025-26-season/']",
+      "seconds": 1.1,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "ESPN injuries JSON",
+      "category": "Injuries",
+      "ok": true,
+      "detail": "27 teams, 92 injury entries; e.g. Aaron Wiggins: Day-To-Day",
+      "seconds": 0.1,
+      "status": "OK",
+      "notes": []
+    },
+    {
+      "name": "ESPN injuries HTML page",
+      "category": "Injuries",
+      "ok": true,
+      "detail": "HTML 0 KB, ~0 table rows",
+      "seconds": 0.1,
+      "status": "OK",
+      "notes": []
+    },
+    {
+      "name": "The Odds API (free tier)",
+      "category": "Consensus lines",
+      "ok": false,
+      "detail": "ODDS_API_KEY not set (free tier: 500 credits/month at the-odds-api.com)",
+      "seconds": 0.0,
+      "status": "SKIP",
+      "notes": []
+    },
+    {
+      "name": "ESPN core API propBets",
+      "category": "Consensus lines",
+      "ok": false,
+      "detail": "AssertionError: event 401901820 (2026-10-06): providers ['100'] have no propBets",
+      "seconds": 0.6,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "PrizePicks public API",
+      "category": "Consensus lines",
+      "ok": false,
+      "detail": "HTTP 403 from https://api.prizepicks.com/projections?league_id=7&per_page=250&single_stat=true",
+      "seconds": 0.1,
+      "status": "FAIL",
+      "notes": []
+    },
+    {
+      "name": "Underdog public API",
+      "category": "Consensus lines",
+      "ok": false,
+      "detail": "HTTP 426 from https://api.underdogfantasy.com/beta/v5/over_under_lines",
+      "seconds": 0.2,
+      "status": "FAIL",
+      "notes": []
+    }
+  ]
+}
