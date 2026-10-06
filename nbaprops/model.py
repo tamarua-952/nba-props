@@ -8,12 +8,14 @@ today's slate).
 Projection = minutes x per-minute rate x adjustments, then a negative
 binomial with a player-specific variance-to-mean ratio.
 
-Minutes: recent-weighted minutes, rescaled so the team's available players
-sum to 240; freed minutes from absent regulars go mostly to players with
-room to play more. Then back-to-back and blowout (spread) adjustments.
+Minutes: recent-weighted minutes, plus a share of the minutes absent regulars
+usually play, weighted toward players with room to play more. The share that
+actually reaches projected players (the rest goes to call-ups and deep bench)
+is learned walk-forward. Then back-to-back and blowout (spread) adjustments.
 
 Rates: recent-weighted per-minute points/rebounds blended with season rate,
-adjusted for usage freed by absent regulars, opponent points/rebounds
+adjusted for usage freed by absent regulars (pass-through learned
+walk-forward), opponent points/rebounds
 allowed to the player's position (per 100 possessions, shrunk), expected
 game pace, and home/away. No head-to-head features.
 """
@@ -38,8 +40,11 @@ P = {
     "max_minutes": 42.0,
     "b2b_minutes_factor": 0.97,       # applied to players projected >= 28 min
     "blowout_per_point": 0.005,       # starters' minutes cut per spread point beyond 6
+    # Pass-through priors, replaced walk-forward once enough results exist.
+    "minutes_pass_through": 0.5,      # share of freed minutes that reaches projected players
     "usage_pass_through_pts": 0.5,    # share of freed usage that lifts a player's scoring rate
     "usage_pass_through_reb": 0.3,
+    "pass_through_min_obs": 300,
     "def_shrink_games": 15,
     "phi_shrink_games": 10,
     "home_pts": 1.01,
@@ -118,15 +123,40 @@ class League:
         # Walk-forward variance calibration: running mean of squared standardised
         # errors of past projections, per stat. Multiplies the model variance.
         self.z2 = {"pts": [0.0, 0], "reb": [0.0, 0]}
+        # Walk-forward pass-through: least-squares slope through the origin of the
+        # realised change on the attempted adjustment, from past projections.
+        self.pt = {k: [0.0, 0.0, 0] for k in ("min", "pts", "reb")}
 
     def var_inflation(self, stat: str) -> float:
         s, n = self.z2[stat]
         return max(s / n, 1.0) if n >= 500 else 1.0
 
-    def record_result(self, stat: str, mean: float, var_model: float, actual: float) -> None:
-        """Feed back a completed projection (model variance before inflation)."""
-        self.z2[stat][0] += (actual - mean) ** 2 / var_model
-        self.z2[stat][1] += 1
+    def pass_through(self, key: str) -> float:
+        num, den, n = self.pt[key]
+        prior = {"min": P["minutes_pass_through"], "pts": P["usage_pass_through_pts"],
+                 "reb": P["usage_pass_through_reb"]}[key]
+        if n < P["pass_through_min_obs"] or den <= 0:
+            return prior
+        return min(max(num / den, 0.0), 1.0)
+
+    def record_result(self, row: dict, actual: dict) -> None:
+        """Feed back a completed projection. `actual` has min, pts, reb."""
+        for stat in ("pts", "reb"):
+            self.z2[stat][0] += (actual[stat] - row[f"{stat}_mean"]) ** 2 / row[f"{stat}_var_model"]
+            self.z2[stat][1] += 1
+        # Minutes: realised gain over base vs the full freed-minutes allocation.
+        if row["alloc_min"] > 0:
+            self.pt["min"][0] += (actual["min"] - row["base_min"]) * row["alloc_min"]
+            self.pt["min"][1] += row["alloc_min"] ** 2
+            self.pt["min"][2] += 1
+        # Rates: realised per-minute rate relative to the unadjusted rate vs freed share.
+        for stat in ("pts", "reb"):
+            share = row[f"{stat}_share"]
+            if share > 0 and actual["min"] >= 10:
+                ratio = actual[stat] / actual["min"] / max(row[f"{stat}_base_rate"], 1e-6) - 1
+                self.pt[stat][0] += ratio * share
+                self.pt[stat][1] += share ** 2
+                self.pt[stat][2] += 1
 
     # ------------------------------------------------------------ helpers
 
@@ -173,7 +203,9 @@ class League:
         freed = sum(min(self.players[p].ew_min.value, P["max_minutes"]) for p in out_regulars)
         room = {pid: max(P["max_minutes"] - m, 0.0) * m for pid, m in base.items()}
         rsum = sum(room.values()) or 1.0
-        mins = {pid: min(base[pid] + freed * room[pid] / rsum, P["max_minutes"]) for pid in pool}
+        alloc = {pid: freed * room[pid] / rsum for pid in pool}
+        k_min = self.pass_through("min")
+        mins = {pid: min(base[pid] + k_min * alloc[pid], P["max_minutes"]) for pid in pool}
 
         b2b = t.last_date is not None and (date - t.last_date).days == 1
         spread_abs = abs(team_spread) if team_spread is not None else 0.0
@@ -205,10 +237,11 @@ class League:
                 m *= 1 - P["blowout_per_point"] * (spread_abs - 6)
 
             row = {"player_id": pid, "pos": ps.pos, "proj_min": m, "b2b": b2b,
+                   "base_min": base[pid], "alloc_min": alloc[pid],
                    "out_regulars": len(out_regulars), "usage_share_freed": usage_share}
             for stat, defd, lg, pass_through, share in (
-                ("pts", o.def_pts, self.lg_pts, P["usage_pass_through_pts"], usage_share),
-                ("reb", o.def_reb, self.lg_reb, P["usage_pass_through_reb"], reb_share),
+                ("pts", o.def_pts, self.lg_pts, self.pass_through("pts"), usage_share),
+                ("reb", o.def_reb, self.lg_reb, self.pass_through("reb"), reb_share),
             ):
                 rate = ps.rate(stat)
                 lg_sum, lg_n = lg[ps.pos]
@@ -217,13 +250,16 @@ class League:
                     raw = defd[ps.pos].value / (lg_sum / lg_n)
                     k = o.def_n / (o.def_n + P["def_shrink_games"])
                     opp_factor = 1 + (raw - 1) * k
-                usage_factor = 1 + pass_through * min(share, 0.5)
+                share = min(share, 0.5)
+                usage_factor = 1 + pass_through * share
                 ha = (P["home_pts"] if home else 1 / P["home_pts"]) if stat == "pts" else 1.0
                 mean = max(m * rate * opp_factor * pace_factor * usage_factor * ha, 0.3)
                 phi_p = ps.phi_raw(stat) if ps.n >= 3 else phi_lg[stat]
                 w = ps.n / (ps.n + P["phi_shrink_games"])
                 phi = max(w * phi_p + (1 - w) * phi_lg[stat], 1.0)
                 row[f"{stat}_mean"] = mean
+                row[f"{stat}_share"] = share
+                row[f"{stat}_base_rate"] = rate * opp_factor * pace_factor * ha
                 row[f"{stat}_var_model"] = mean * phi
                 row[f"{stat}_var"] = mean * phi * self.var_inflation(stat)
                 row[f"{stat}_opp_factor"] = opp_factor

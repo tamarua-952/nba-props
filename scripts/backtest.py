@@ -75,11 +75,15 @@ def run(season: int, min_prior: int, min_minutes: float) -> pd.DataFrame:
                         r[f"{s}_l10"] = sum(h) / len(h) if h else math.nan
                     day_rows.append(r)
         # Results, then fold the whole date into the state (no same-day leakage).
+        acts = {}
+        for g in day.itertuples():
+            if g.game_id in pg:
+                for a in pg[g.game_id].itertuples():
+                    acts[(g.game_id, a.player_id)] = {"min": a.min, "pts": a.pts, "reb": a.reb}
         for r in day_rows:
-            act = pg[r["game_id"]].set_index("player_id")
-            if r["player_id"] in act.index and act.at[r["player_id"], "min"] > 0 and r["proj_min"] >= min_minutes:
-                for s in ("pts", "reb"):
-                    lg.record_result(s, r[f"{s}_mean"], r[f"{s}_var_model"], act.at[r["player_id"], s])
+            a = acts.get((r["game_id"], r["player_id"]))
+            if a and a["min"] > 0 and r["proj_min"] >= min_minutes:
+                lg.record_result(r, a)
         for g in day.itertuples():
             if g.game_id in pg and g.game_id in tg:
                 prow = pg[g.game_id]
@@ -90,6 +94,9 @@ def run(season: int, min_prior: int, min_minutes: float) -> pd.DataFrame:
         out += day_rows
 
     proj = pd.DataFrame(out)
+    print("learned pass-through (end of season):",
+          {k: round(lg.pass_through(k), 3) for k in ("min", "pts", "reb")},
+          "variance inflation:", {k: round(lg.var_inflation(k), 3) for k in ("pts", "reb")})
     actual = players[["game_id", "player_id", "player", "min", "pts", "reb"]].rename(
         columns={"min": "act_min", "pts": "act_pts", "reb": "act_reb"})
     proj = proj.merge(actual, on=["game_id", "player_id"], how="left")
