@@ -1,0 +1,637 @@
+{
+ "brief_date_nzt": "2026-10-07",
+ "slate_date_et": "2026-10-06",
+ "generated_at_utc": "2026-10-06T04:02+00:00",
+ "status": "OK",
+ "message": "",
+ "games": 4,
+ "games_playable": 4,
+ "candidates": 110,
+ "markets": [
+  "PTS",
+  "REB"
+ ],
+ "calibration": {
+  "PTS": {
+   "shrink": 0.73,
+   "offset": 0.0,
+   "cap": 0.7
+  },
+  "REB": {
+   "shrink": 1.0,
+   "offset": -0.0125,
+   "cap": null
+  }
+ },
+ "margin_buffer": 0.05,
+ "odds_api": {
+  "top_games": [
+   "401901820",
+   "401914128",
+   "401898390"
+  ],
+  "morning_calls": 0,
+  "skipped_morning": false,
+  "note": " No Odds API event for BKN@CHA. No Odds API event for DEN@UTAH. No Odds API event for LAL@GS.",
+  "events": {}
+ },
+ "picks": [
+  {
+   "game_id": "401901820",
+   "tip_utc": "2026-10-06T23:00Z",
+   "tip_nzt": "Wed 7 Oct 12:00 NZT",
+   "player_id": "5107173",
+   "player": "Danny Wolf",
+   "team": "BKN",
+   "opp": "CHA",
+   "home": false,
+   "market": "REB",
+   "side": "under",
+   "line": 6.5,
+   "projection": 4.4,
+   "proj_min": 22.2,
+   "last10_avg": 6.0,
+   "model_prob": 0.8312,
+   "edge": 0.2964,
+   "fair_odds": 1.2,
+   "threshold": 1.26,
+   "ladder": [
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.9028,
+     "threshold": 1.16
+    },
+    {
+     "line": 2.5,
+     "side": "over",
+     "model_prob": 0.777,
+     "threshold": 1.35
+    },
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.61,
+     "threshold": 1.72
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.5641,
+     "threshold": 1.86
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.716,
+     "threshold": 1.47
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.8312,
+     "threshold": 1.26
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.9092,
+     "threshold": 1.15
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 4.4 reb in 22 min vs last-10 avg 6.0; opp allows -15% reb to Fs; pace -4%.",
+   "consensus": null
+  },
+  {
+   "game_id": "401914128",
+   "tip_utc": "2026-10-07T01:00Z",
+   "tip_nzt": "Wed 7 Oct 14:00 NZT",
+   "player_id": "3102530",
+   "player": "Jusuf Nurkic",
+   "team": "UTAH",
+   "opp": "DEN",
+   "home": true,
+   "market": "REB",
+   "side": "under",
+   "line": 12.5,
+   "projection": 9.7,
+   "proj_min": 28.0,
+   "last10_avg": 12.2,
+   "model_prob": 0.7792,
+   "edge": 0.2445,
+   "fair_odds": 1.28,
+   "threshold": 1.35,
+   "ladder": [
+    {
+     "line": 6.5,
+     "side": "over",
+     "model_prob": 0.7568,
+     "threshold": 1.39
+    },
+    {
+     "line": 7.5,
+     "side": "over",
+     "model_prob": 0.664,
+     "threshold": 1.58
+    },
+    {
+     "line": 8.5,
+     "side": "over",
+     "model_prob": 0.5652,
+     "threshold": 1.86
+    },
+    {
+     "line": 9.5,
+     "side": "under",
+     "model_prob": 0.5331,
+     "threshold": 1.97
+    },
+    {
+     "line": 10.5,
+     "side": "under",
+     "model_prob": 0.6256,
+     "threshold": 1.68
+    },
+    {
+     "line": 11.5,
+     "side": "under",
+     "model_prob": 0.7084,
+     "threshold": 1.48
+    },
+    {
+     "line": 12.5,
+     "side": "under",
+     "model_prob": 0.7792,
+     "threshold": 1.35
+    }
+   ],
+   "flags": [
+    "INJURY_PENDING"
+   ],
+   "injury_pending": [
+    "Jusuf Nurkic (questionable)",
+    "Kyle Filipowski (questionable)",
+    "Brice Sensabaugh (questionable)"
+   ],
+   "reasoning": "Under: proj 9.7 reb in 28 min vs last-10 avg 12.2; opp allows -12% reb to Cs.",
+   "consensus": null
+  },
+  {
+   "game_id": "401898390",
+   "tip_utc": "2026-10-07T02:00Z",
+   "tip_nzt": "Wed 7 Oct 15:00 NZT",
+   "player_id": "4592691",
+   "player": "Jake LaRavia",
+   "team": "LAL",
+   "opp": "GS",
+   "home": false,
+   "market": "REB",
+   "side": "under",
+   "line": 5.5,
+   "projection": 4.1,
+   "proj_min": 25.7,
+   "last10_avg": 5.1,
+   "model_prob": 0.7635,
+   "edge": 0.2288,
+   "fair_odds": 1.31,
+   "threshold": 1.38,
+   "ladder": [
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.8481,
+     "threshold": 1.24
+    },
+    {
+     "line": 2.5,
+     "side": "over",
+     "model_prob": 0.6948,
+     "threshold": 1.51
+    },
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.5232,
+     "threshold": 2.01
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.6355,
+     "threshold": 1.65
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.7635,
+     "threshold": 1.38
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.8569,
+     "threshold": 1.23
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.9198,
+     "threshold": 1.14
+    }
+   ],
+   "flags": [
+    "INJURY_PENDING"
+   ],
+   "injury_pending": [
+    "Collin Sexton (questionable)",
+    "Austin Reaves (questionable)",
+    "Walker Kessler (questionable)"
+   ],
+   "reasoning": "Under: proj 4.1 reb in 26 min vs last-10 avg 5.1; opp allows -6% reb to Fs.",
+   "consensus": null
+  },
+  {
+   "game_id": "401914128",
+   "tip_utc": "2026-10-07T01:00Z",
+   "tip_nzt": "Wed 7 Oct 14:00 NZT",
+   "player_id": "4397077",
+   "player": "Jaxson Hayes",
+   "team": "UTAH",
+   "opp": "DEN",
+   "home": true,
+   "market": "REB",
+   "side": "under",
+   "line": 5.5,
+   "projection": 4.2,
+   "proj_min": 21.3,
+   "last10_avg": 5.1,
+   "model_prob": 0.7414,
+   "edge": 0.2066,
+   "fair_odds": 1.35,
+   "threshold": 1.42,
+   "ladder": [
+    {
+     "line": 1.5,
+     "side": "over",
+     "model_prob": 0.8646,
+     "threshold": 1.21
+    },
+    {
+     "line": 2.5,
+     "side": "over",
+     "model_prob": 0.7204,
+     "threshold": 1.46
+    },
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.5525,
+     "threshold": 1.9
+    },
+    {
+     "line": 4.5,
+     "side": "under",
+     "model_prob": 0.6081,
+     "threshold": 1.73
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.7414,
+     "threshold": 1.42
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.8408,
+     "threshold": 1.25
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.909,
+     "threshold": 1.16
+    }
+   ],
+   "flags": [
+    "TEAM_CHANGE",
+    "INJURY_PENDING"
+   ],
+   "injury_pending": [
+    "Jusuf Nurkic (questionable)",
+    "Kyle Filipowski (questionable)",
+    "Brice Sensabaugh (questionable)"
+   ],
+   "reasoning": "Under: proj 4.2 reb in 21 min vs last-10 avg 5.1; opp allows -12% reb to Cs.",
+   "consensus": null
+  },
+  {
+   "game_id": "401898389",
+   "tip_utc": "2026-10-07T00:00Z",
+   "tip_nzt": "Wed 7 Oct 13:00 NZT",
+   "player_id": "5144091",
+   "player": "Jeremiah Fears",
+   "team": "NO",
+   "opp": "OKC",
+   "home": false,
+   "market": "PTS",
+   "side": "under",
+   "line": 23.5,
+   "projection": 17.8,
+   "proj_min": 30.3,
+   "last10_avg": 23.6,
+   "model_prob": 0.7,
+   "edge": 0.1652,
+   "fair_odds": 1.43,
+   "threshold": 1.5,
+   "ladder": [
+    {
+     "line": 12.5,
+     "side": "over",
+     "model_prob": 0.6556,
+     "threshold": 1.6
+    },
+    {
+     "line": 13.5,
+     "side": "over",
+     "model_prob": 0.6185,
+     "threshold": 1.7
+    },
+    {
+     "line": 14.5,
+     "side": "over",
+     "model_prob": 0.5809,
+     "threshold": 1.81
+    },
+    {
+     "line": 15.5,
+     "side": "over",
+     "model_prob": 0.5432,
+     "threshold": 1.93
+    },
+    {
+     "line": 16.5,
+     "side": "over",
+     "model_prob": 0.5062,
+     "threshold": 2.07
+    },
+    {
+     "line": 17.5,
+     "side": "under",
+     "model_prob": 0.5296,
+     "threshold": 1.98
+    },
+    {
+     "line": 18.5,
+     "side": "under",
+     "model_prob": 0.5638,
+     "threshold": 1.86
+    },
+    {
+     "line": 19.5,
+     "side": "under",
+     "model_prob": 0.5961,
+     "threshold": 1.76
+    },
+    {
+     "line": 20.5,
+     "side": "under",
+     "model_prob": 0.6263,
+     "threshold": 1.68
+    },
+    {
+     "line": 21.5,
+     "side": "under",
+     "model_prob": 0.6542,
+     "threshold": 1.6
+    },
+    {
+     "line": 22.5,
+     "side": "under",
+     "model_prob": 0.6799,
+     "threshold": 1.54
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 17.8 pts in 30 min vs last-10 avg 23.6; opp allows -4% pts to Gs.",
+   "consensus": null
+  },
+  {
+   "game_id": "401898389",
+   "tip_utc": "2026-10-07T00:00Z",
+   "tip_nzt": "Wed 7 Oct 13:00 NZT",
+   "player_id": "4433255",
+   "player": "Chet Holmgren",
+   "team": "OKC",
+   "opp": "NO",
+   "home": true,
+   "market": "REB",
+   "side": "over",
+   "line": 7.5,
+   "projection": 9.8,
+   "proj_min": 27.3,
+   "last10_avg": 7.9,
+   "model_prob": 0.6981,
+   "edge": 0.1633,
+   "fair_odds": 1.43,
+   "threshold": 1.5,
+   "ladder": [
+    {
+     "line": 6.5,
+     "side": "over",
+     "model_prob": 0.7912,
+     "threshold": 1.33
+    },
+    {
+     "line": 7.5,
+     "side": "over",
+     "model_prob": 0.6981,
+     "threshold": 1.5
+    },
+    {
+     "line": 8.5,
+     "side": "over",
+     "model_prob": 0.5946,
+     "threshold": 1.77
+    },
+    {
+     "line": 9.5,
+     "side": "under",
+     "model_prob": 0.5115,
+     "threshold": 2.05
+    },
+    {
+     "line": 10.5,
+     "side": "under",
+     "model_prob": 0.613,
+     "threshold": 1.71
+    },
+    {
+     "line": 11.5,
+     "side": "under",
+     "model_prob": 0.7042,
+     "threshold": 1.49
+    },
+    {
+     "line": 12.5,
+     "side": "under",
+     "model_prob": 0.7821,
+     "threshold": 1.34
+    }
+   ],
+   "flags": [
+    "INJURY_PENDING"
+   ],
+   "injury_pending": [
+    "Chet Holmgren (questionable)",
+    "Jalen Williams (questionable)",
+    "Shai Gilgeous-Alexander (questionable)"
+   ],
+   "reasoning": "Over: proj 9.8 reb in 27 min vs last-10 avg 7.9; opp allows +11% reb to Cs; pace +2%.",
+   "consensus": null
+  },
+  {
+   "game_id": "401901820",
+   "tip_utc": "2026-10-06T23:00Z",
+   "tip_nzt": "Wed 7 Oct 12:00 NZT",
+   "player_id": "4278104",
+   "player": "Michael Porter Jr.",
+   "team": "BKN",
+   "opp": "CHA",
+   "home": false,
+   "market": "REB",
+   "side": "under",
+   "line": 6.5,
+   "projection": 5.4,
+   "proj_min": 31.2,
+   "last10_avg": 6.8,
+   "model_prob": 0.6978,
+   "edge": 0.163,
+   "fair_odds": 1.43,
+   "threshold": 1.5,
+   "ladder": [
+    {
+     "line": 2.5,
+     "side": "over",
+     "model_prob": 0.8583,
+     "threshold": 1.22
+    },
+    {
+     "line": 3.5,
+     "side": "over",
+     "model_prob": 0.7346,
+     "threshold": 1.43
+    },
+    {
+     "line": 4.5,
+     "side": "over",
+     "model_prob": 0.586,
+     "threshold": 1.79
+    },
+    {
+     "line": 5.5,
+     "side": "under",
+     "model_prob": 0.5644,
+     "threshold": 1.86
+    },
+    {
+     "line": 6.5,
+     "side": "under",
+     "model_prob": 0.6978,
+     "threshold": 1.5
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.8042,
+     "threshold": 1.31
+    },
+    {
+     "line": 8.5,
+     "side": "under",
+     "model_prob": 0.8818,
+     "threshold": 1.19
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 5.4 reb in 31 min vs last-10 avg 6.8; opp allows -15% reb to Fs; pace -4%.",
+   "consensus": null
+  },
+  {
+   "game_id": "401898389",
+   "tip_utc": "2026-10-07T00:00Z",
+   "tip_nzt": "Wed 7 Oct 13:00 NZT",
+   "player_id": "4869780",
+   "player": "Derik Queen",
+   "team": "NO",
+   "opp": "OKC",
+   "home": false,
+   "market": "REB",
+   "side": "under",
+   "line": 8.5,
+   "projection": 7.2,
+   "proj_min": 26.8,
+   "last10_avg": 8.8,
+   "model_prob": 0.6954,
+   "edge": 0.1606,
+   "fair_odds": 1.44,
+   "threshold": 1.51,
+   "ladder": [
+    {
+     "line": 4.5,
+     "side": "over",
+     "model_prob": 0.7574,
+     "threshold": 1.39
+    },
+    {
+     "line": 5.5,
+     "side": "over",
+     "model_prob": 0.643,
+     "threshold": 1.63
+    },
+    {
+     "line": 6.5,
+     "side": "over",
+     "model_prob": 0.5226,
+     "threshold": 2.01
+    },
+    {
+     "line": 7.5,
+     "side": "under",
+     "model_prob": 0.5928,
+     "threshold": 1.77
+    },
+    {
+     "line": 8.5,
+     "side": "under",
+     "model_prob": 0.6954,
+     "threshold": 1.51
+    },
+    {
+     "line": 9.5,
+     "side": "under",
+     "model_prob": 0.781,
+     "threshold": 1.34
+    },
+    {
+     "line": 10.5,
+     "side": "under",
+     "model_prob": 0.8488,
+     "threshold": 1.24
+    }
+   ],
+   "flags": [],
+   "injury_pending": [],
+   "reasoning": "Under: proj 7.2 reb in 27 min vs last-10 avg 8.8; opp allows -8% reb to Cs.",
+   "consensus": null
+  }
+ ],
+ "data": {
+  "current_season_games": 0,
+  "ledger_rows_settled": 0
+ }
+}

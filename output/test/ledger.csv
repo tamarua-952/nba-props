@@ -1,0 +1,9 @@
+date,game_id,tip_nzt,player_id,player,team,opp,market,side,line,projection,model_prob,fair_odds,threshold,flags,consensus_line,betcha_line,betcha_price,closing_line,closing_over_price,closing_under_price,actual,result,pl_units,paper_pl_units,clv_pct,clv_line
+2026-10-07,401901820,Wed 7 Oct 12:00 NZT,5107173,Danny Wolf,BKN,CHA,REB,under,6.5,4.4,0.8312,1.2,1.26,,,,,,,,,,,,,
+2026-10-07,401914128,Wed 7 Oct 14:00 NZT,3102530,Jusuf Nurkic,UTAH,DEN,REB,under,12.5,9.7,0.7792,1.28,1.35,INJURY_PENDING,,,,,,,,,,,,
+2026-10-07,401898390,Wed 7 Oct 15:00 NZT,4592691,Jake LaRavia,LAL,GS,REB,under,5.5,4.1,0.7635,1.31,1.38,INJURY_PENDING,,,,,,,,,,,,
+2026-10-07,401914128,Wed 7 Oct 14:00 NZT,4397077,Jaxson Hayes,UTAH,DEN,REB,under,5.5,4.2,0.7414,1.35,1.42,TEAM_CHANGE;INJURY_PENDING,,,,,,,,,,,,
+2026-10-07,401898389,Wed 7 Oct 13:00 NZT,5144091,Jeremiah Fears,NO,OKC,PTS,under,23.5,17.8,0.7,1.43,1.5,,,,,,,,,,,,,
+2026-10-07,401898389,Wed 7 Oct 13:00 NZT,4433255,Chet Holmgren,OKC,NO,REB,over,7.5,9.8,0.6981,1.43,1.5,INJURY_PENDING,,,,,,,,,,,,
+2026-10-07,401901820,Wed 7 Oct 12:00 NZT,4278104,Michael Porter Jr.,BKN,CHA,REB,under,6.5,5.4,0.6978,1.43,1.5,,,,,,,,,,,,,
+2026-10-07,401898389,Wed 7 Oct 13:00 NZT,4869780,Derik Queen,NO,OKC,REB,under,8.5,7.2,0.6954,1.44,1.51,,,,,,,,,,,,,
