@@ -1,0 +1,36 @@
+name: Backtest season data pull
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repo-writer-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Pull season box scores (ESPN, BBRef gap fill)
+        run: python scripts/pull_season.py
+      - name: Commit raw cache and processed data
+        # Commit even after a failure so a rerun resumes from the cache.
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw data/processed 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Backtest season data pull (GitHub Actions)"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
