@@ -1,0 +1,13 @@
+{
+ "season": 2025,
+ "scheduled_completed": 1231,
+ "games": 1231,
+ "player_rows": 32610,
+ "espn_gaps": 0,
+ "bbref_filled": [],
+ "failures": [],
+ "espn_network_calls": 1405,
+ "bbref_network_calls": 0,
+ "games_with_spread": 0,
+ "box_points_short_of_team_score": []
+}
