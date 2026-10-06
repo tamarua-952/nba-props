@@ -48,7 +48,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for p in output ledger.csv data; do [ -e "$p" ] && git add "$p"; done
+          for p in output ledger.csv data; do if [ -e "$p" ]; then git add "$p"; fi; done
           git diff --cached --quiet && exit 0
           git commit -q -m "Daily brief $(TZ=Pacific/Auckland date +%Y-%m-%d)"
           git pull --rebase origin "$GITHUB_REF_NAME"
