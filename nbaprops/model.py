@@ -45,6 +45,9 @@ P = {
     "usage_pass_through_pts": 0.5,    # share of freed usage that lifts a player's scoring rate
     "usage_pass_through_reb": 0.3,
     "pass_through_min_obs": 300,
+    "team_change_games": 10,          # TEAM_CHANGE flag lasts this many games with the new team
+    "role_check_games": 10,           # ROLE_CHANGE is checked during a season's first N games
+    "role_change_minutes": 6.0,       # ... when season minutes differ from last season's by this much
     "def_shrink_games": 15,
     "phi_shrink_games": 10,
     "home_pts": 1.01,
@@ -86,6 +89,13 @@ class PlayerState:
     sum_reb: float = 0.0
     sum_pts2: float = 0.0
     sum_reb2: float = 0.0
+    # Team and role tracking for the TEAM_CHANGE / ROLE_CHANGE flags.
+    team: str | None = None
+    prev_team: str | None = None
+    games_with_team: int = 0
+    season_n: int = 0
+    season_min: float = 0.0
+    prev_season_ew_min: float | None = None
 
     def rate(self, stat: str) -> float:
         ew = (self.ew_pts if stat == "pts" else self.ew_reb).value / max(self.ew_mins_r.value, 1e-9)
@@ -164,6 +174,28 @@ class League:
         vals = [s.phi_raw(stat) for s in self.players.values() if s.n >= 10]
         return sum(vals) / len(vals) if vals else (1.8 if stat == "pts" else 1.4)
 
+    def new_season(self) -> None:
+        """Season boundary: player history carries over (it counts toward the
+        min-games rule); rosters and rest days do not."""
+        for ps in self.players.values():
+            ps.prev_season_ew_min = ps.ew_min.value if ps.n else None
+            ps.season_n = 0
+            ps.season_min = 0.0
+        for t in self.teams.values():
+            t.recent.clear()
+            t.last_date = None
+
+    def flags(self, pid: str, team_id: str) -> list[str]:
+        ps = self.players[pid]
+        out = []
+        if ps.team is not None and (ps.team != team_id or
+                                    (ps.prev_team is not None and ps.games_with_team < P["team_change_games"])):
+            out.append("TEAM_CHANGE")
+        if (ps.prev_season_ew_min is not None and 1 <= ps.season_n < P["role_check_games"]
+                and abs(ps.season_min / ps.season_n - ps.prev_season_ew_min) >= P["role_change_minutes"]):
+            out.append("ROLE_CHANGE")
+        return out
+
     def regulars(self, team_id: str) -> set[str]:
         t = self.teams[team_id]
         last5 = list(t.recent)[-5:]
@@ -173,12 +205,6 @@ class League:
                 counts[pid] += 1
         return {pid for pid, c in counts.items()
                 if c >= min(P["regular_recent"], len(last5)) and self.players[pid].ew_min.value >= P["regular_min"]}
-
-    def recent_players(self, team_id: str) -> set[str]:
-        out = set()
-        for s in self.teams[team_id].recent:
-            out |= s
-        return out
 
     # ------------------------------------------------------------ projection
 
@@ -190,7 +216,9 @@ class League:
         players listed in the box score, which omits inactive/injured players).
         """
         t, o = self.teams[team_id], self.teams[opp_id]
-        pool = [pid for pid in (self.recent_players(team_id) & available) if self.players[pid].n > 0]
+        # Anyone available with history: includes players new to the team (trades, free
+        # agency) and, at season start, everyone whose history is last season's.
+        pool = [pid for pid in available if self.players[pid].n > 0]
         if not pool:
             return []
         out_regulars = self.regulars(team_id) - available
@@ -237,6 +265,7 @@ class League:
                 m *= 1 - P["blowout_per_point"] * (spread_abs - 6)
 
             row = {"player_id": pid, "pos": ps.pos, "proj_min": m, "b2b": b2b,
+                   "flags": ",".join(self.flags(pid, team_id)), "season_games": ps.season_n,
                    "base_min": base[pid], "alloc_min": alloc[pid],
                    "out_regulars": len(out_regulars), "usage_share_freed": usage_share}
             for stat, defd, lg, pass_through, share in (
@@ -319,6 +348,11 @@ class League:
             ps.sum_reb += r.reb
             ps.sum_pts2 += r.pts ** 2
             ps.sum_reb2 += r.reb ** 2
+            if ps.team != r.team_id:
+                ps.prev_team, ps.team, ps.games_with_team = ps.team, r.team_id, 0
+            ps.games_with_team += 1
+            ps.season_n += 1
+            ps.season_min += r.min
 
 
 def model_position(pos: str) -> str:

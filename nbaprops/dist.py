@@ -66,3 +66,32 @@ def expected_value(p: float, price: float) -> float:
 def edge_vs_price(p: float, price: float) -> float:
     """Model probability minus the probability implied by a decimal price."""
     return p - 1.0 / price
+
+
+def line_probs_vec(lines, means, variances):
+    """Vectorised line_probs: arrays of P(over), P(under), P(push)."""
+    import numpy as np
+
+    lines, means, variances = (np.asarray(x, dtype=float) for x in (lines, means, variances))
+    if np.any(means <= 0):
+        raise ValueError("means must be positive")
+    pois = variances <= means * (1 + 1e-9)
+    r = np.where(pois, 1.0, means ** 2 / np.where(pois, 1.0, variances - means))
+    p = r / (r + means)
+    k = np.floor(lines)
+    whole = lines == k
+
+    def cdf(x):
+        return np.where(pois, stats.poisson.cdf(x, means), stats.nbinom.cdf(x, r, p))
+
+    def pmf(x):
+        return np.where(pois, stats.poisson.pmf(x, means), stats.nbinom.pmf(x, r, p))
+
+    push = np.where(whole, pmf(k), 0.0)
+    under = np.where(whole, np.where(k > 0, cdf(k - 1), 0.0), cdf(k))
+    return 1.0 - under - push, under, push
+
+
+def shrink(p, s: float):
+    """Shrink a probability toward 0.5 by factor s (s=1: unchanged, s=0: coin flip)."""
+    return 0.5 + s * (p - 0.5)

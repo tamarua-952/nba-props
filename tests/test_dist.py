@@ -87,3 +87,20 @@ def test_ev_is_zero_at_fair_price_and_positive_at_threshold():
 def test_edge_vs_typical_price():
     # $1.87 implies ~53.5%
     assert dist.edge_vs_price(0.60, 1.87) == pytest.approx(0.60 - 1 / 1.87)
+
+
+def test_vectorised_matches_scalar():
+    import numpy as np
+
+    cases = [(24.5, 25.0, 70.0), (10, 10.0, 18.0), (5.5, 6.0, 6.0), (0, 2.0, 2.0), (7, 8.0, 5.0)]
+    over, under, push = dist.line_probs_vec(*zip(*cases))
+    for i, c in enumerate(cases):
+        s = dist.line_probs(*c)
+        assert np.allclose([over[i], under[i], push[i]], [s.over, s.under, s.push])
+
+
+def test_shrink():
+    assert dist.shrink(0.7, 1.0) == pytest.approx(0.7)
+    assert dist.shrink(0.7, 0.5) == pytest.approx(0.6)
+    assert dist.shrink(0.3, 0.5) == pytest.approx(0.4)
+    assert dist.shrink(0.9, 0.0) == pytest.approx(0.5)
