@@ -2,110 +2,141 @@
 
 **Calibration only, not edge.** No historical prop lines are available, so this checks whether the model's probabilities are honest, not whether they beat a bookmaker.
 
-Player-games projected: 15170 (2025-10-30 to 2026-04-12). Walk-forward: each projection uses only games on earlier dates.
+Evaluated player-games: 16726 (2025-10-21 to 2026-04-12). History seasons replayed first (count toward the 5-game minimum, warm up learned corrections): [2025]. Walk-forward throughout: each projection uses only earlier dates.
 
-Proxy line = player's last-10 average floored to x.5. Real book lines are sharper than this, so results at the proxy line say nothing about edge.
+Minutes MAE 4.6. PTS: MAE 5.22 vs last-10 5.29, bias +0.28. REB: MAE 2.01 vs last-10 2.07, bias +0.14.
 
-## PTS
+Points gate: calibrated pick-side buckets 60%–65%, 65%–70%, 70%–75% within ±2%.
 
-Projection MAE 5.18 (last-10 average: 5.25); bias +0.19; minutes MAE 4.4.
+## Proxy line: nearest x.5 (floor + 0.5)
 
-At the proxy line (n=15170): Brier 0.2444 vs naive last-10 0.2508 vs coin 0.25; log loss 0.6820 vs 0.6949.
+### PTS (n=16726)
 
-### Pick-side calibration at the proxy line
+Walk-forward shrink factor during the season: 0.73–0.77. **Gate: FAIL** (60%–65% -0.1%, 65%–70% +0.0%, 70%–75% -2.6%).
 
-Model's probability for the side it favours vs how often that side won. This is the table that matters for picks (spec needs > ~53.5% at $1.87).
+Calibrated (shrunk) pick-side:
 
-| Model prob | n | Mean pred | Hit rate | ±95% | Hit − pred |
-|---|---|---|---|---|---|
-| 50%–55% | 4919 | 52.5% | 51.4% | 1.4% | -1.1% |
-| 55%–60% | 4337 | 57.4% | 55.2% | 1.5% | -2.3% |
-| 60%–65% | 3103 | 62.3% | 59.3% | 1.7% | -3.0% |
-| 65%–70% | 1731 | 67.2% | 62.3% | 2.3% | -4.9% |
-| 70%–75% | 813 | 72.1% | 65.6% | 3.3% | -6.5% |
-| 75%–100% | 267 | 77.7% | 70.4% | 5.5% | -7.3% |
+| Model prob | n | Mean pred | Hit rate | ±95% | Hit − pred | Over share |
+|---|---|---|---|---|---|---|
+| 50%–55% | 6544 | 52.5% | 52.2% | 1.2% | -0.2% | 42% |
+| 55%–60% | 5336 | 57.4% | 57.2% | 1.3% | -0.2% | 29% |
+| 60%–65% | 3205 | 62.2% | 62.1% | 1.7% | -0.1% | 21% |
+| 65%–70% | 1350 | 66.9% | 67.0% | 2.5% | +0.0% | 21% |
+| 70%–75% | 253 | 71.7% | 69.2% | 5.7% | -2.6% | 19% |
+| 75%–100% | 38 | 76.6% | 84.2% | 11.6% | +7.7% | 32% |
 
-### P(over) reliability, all grid lines
+Over/under split, calibrated:
 
-| P(over) | n | Mean pred | Hit rate | ±95% | Hit − pred |
-|---|---|---|---|---|---|
-| 0%–10% | 2 | 8.3% | 0.0% | 0.0% | -8.3% |
-| 10%–20% | 2287 | 17.7% | 19.9% | 1.6% | +2.2% |
-| 20%–30% | 14555 | 25.4% | 26.5% | 0.7% | +1.1% |
-| 30%–40% | 14552 | 34.3% | 34.8% | 0.8% | +0.5% |
-| 40%–50% | 14354 | 44.4% | 46.3% | 0.8% | +1.9% |
-| 50%–60% | 13059 | 55.7% | 58.4% | 0.8% | +2.7% |
-| 60%–70% | 10616 | 65.3% | 67.7% | 0.9% | +2.4% |
-| 70%–80% | 5448 | 73.7% | 74.1% | 1.2% | +0.4% |
-| 80%–90% | 903 | 83.5% | 82.5% | 2.5% | -1.0% |
-| 90%–100% | 66 | 91.8% | 84.8% | 8.7% | -6.9% |
-
-### Segments (proxy line)
-
-| Segment | n | Pred over | Hit over | Mean − actual |
-|---|---|---|---|---|
-| teammate_regular_out | 7464 | 47.8% | 50.2% | +0.13 |
-| no_regular_out | 7706 | 42.4% | 43.8% | +0.25 |
-| back_to_back | 2638 | 44.6% | 48.3% | -0.19 |
-
-| Month | n | Pred over | Hit over |
+| Picks | n | Over: share / pred / hit | Under: share / pred / hit |
 |---|---|---|---|
-| 2025-10 | 59 | 54.7% | 44.1% |
-| 2025-11 | 2746 | 47.0% | 47.6% |
-| 2025-12 | 2624 | 45.0% | 44.8% |
-| 2026-01 | 3108 | 45.3% | 46.1% |
-| 2026-02 | 2199 | 44.7% | 48.7% |
-| 2026-03 | 3224 | 43.7% | 47.0% |
-| 2026-04 | 1210 | 43.9% | 49.2% |
+| all | 16726 | 32.0% / 56.0% / 55.5% | 68.0% / 58.1% / 58.1% |
+| p>=55% | 10182 | 25.5% / 59.9% / 59.7% | 74.5% / 60.8% / 60.7% |
+| p>=60% | 4846 | 21.3% / 64.1% / 62.8% | 78.7% / 64.2% / 64.4% |
 
-## REB
+Raw (before shrinkage), for reference:
 
-Projection MAE 2.02 (last-10 average: 2.06); bias +0.09; minutes MAE 4.4.
+| Model prob | n | Mean pred | Hit rate | ±95% | Hit − pred | Over share |
+|---|---|---|---|---|---|---|
+| 50%–55% | 4954 | 52.5% | 52.1% | 1.4% | -0.4% | 44% |
+| 55%–60% | 4375 | 57.4% | 54.4% | 1.5% | -3.0% | 34% |
+| 60%–65% | 3445 | 62.3% | 59.3% | 1.6% | -3.0% | 25% |
+| 65%–70% | 2256 | 67.3% | 63.2% | 2.0% | -4.1% | 21% |
+| 70%–75% | 1206 | 72.1% | 66.5% | 2.7% | -5.6% | 22% |
+| 75%–100% | 490 | 78.3% | 70.2% | 4.0% | -8.1% | 21% |
 
-At the proxy line (n=15170): Brier 0.2390 vs naive last-10 0.2468 vs coin 0.25; log loss 0.6705 vs 0.6868.
+### REB (n=16726)
 
-### Pick-side calibration at the proxy line
+Raw pick-side (no recalibration applied):
 
-Model's probability for the side it favours vs how often that side won. This is the table that matters for picks (spec needs > ~53.5% at $1.87).
+| Model prob | n | Mean pred | Hit rate | ±95% | Hit − pred | Over share |
+|---|---|---|---|---|---|---|
+| 50%–55% | 5145 | 52.5% | 51.9% | 1.4% | -0.6% | 46% |
+| 55%–60% | 4390 | 57.4% | 56.3% | 1.5% | -1.1% | 37% |
+| 60%–65% | 3464 | 62.4% | 63.4% | 1.6% | +1.0% | 29% |
+| 65%–70% | 2167 | 67.2% | 66.8% | 2.0% | -0.4% | 24% |
+| 70%–75% | 1090 | 72.2% | 72.4% | 2.7% | +0.2% | 21% |
+| 75%–100% | 470 | 78.4% | 79.1% | 3.7% | +0.8% | 23% |
 
-| Model prob | n | Mean pred | Hit rate | ±95% | Hit − pred |
-|---|---|---|---|---|---|
-| 50%–55% | 5041 | 52.5% | 51.4% | 1.4% | -1.1% |
-| 55%–60% | 4127 | 57.4% | 55.3% | 1.5% | -2.1% |
-| 60%–65% | 3086 | 62.4% | 62.2% | 1.7% | -0.1% |
-| 65%–70% | 1796 | 67.2% | 66.3% | 2.2% | -0.9% |
-| 70%–75% | 790 | 72.1% | 71.6% | 3.1% | -0.5% |
-| 75%–100% | 330 | 78.3% | 77.6% | 4.5% | -0.7% |
+Over/under split:
 
-### P(over) reliability, all grid lines
-
-| P(over) | n | Mean pred | Hit rate | ±95% | Hit − pred |
-|---|---|---|---|---|---|
-| 0%–10% | 542 | 8.3% | 10.0% | 2.5% | +1.7% |
-| 10%–20% | 7460 | 16.1% | 16.4% | 0.8% | +0.3% |
-| 20%–30% | 13054 | 25.1% | 24.1% | 0.7% | -0.9% |
-| 30%–40% | 11418 | 34.8% | 33.4% | 0.9% | -1.5% |
-| 40%–50% | 10168 | 45.0% | 44.9% | 1.0% | -0.1% |
-| 50%–60% | 9352 | 54.9% | 54.5% | 1.0% | -0.5% |
-| 60%–70% | 9530 | 65.0% | 65.1% | 1.0% | +0.1% |
-| 70%–80% | 8176 | 74.7% | 74.5% | 0.9% | -0.2% |
-| 80%–90% | 4717 | 84.4% | 85.0% | 1.0% | +0.6% |
-| 90%–100% | 987 | 91.9% | 92.5% | 1.6% | +0.6% |
-
-### Segments (proxy line)
-
-| Segment | n | Pred over | Hit over | Mean − actual |
-|---|---|---|---|---|
-| teammate_regular_out | 7464 | 48.0% | 46.9% | +0.12 |
-| no_regular_out | 7706 | 43.6% | 44.0% | +0.06 |
-| back_to_back | 2638 | 45.3% | 45.8% | +0.06 |
-
-| Month | n | Pred over | Hit over |
+| Picks | n | Over: share / pred / hit | Under: share / pred / hit |
 |---|---|---|---|
-| 2025-10 | 59 | 49.3% | 42.4% |
-| 2025-11 | 2746 | 47.2% | 47.4% |
-| 2025-12 | 2624 | 45.7% | 46.1% |
-| 2026-01 | 3108 | 45.2% | 45.6% |
-| 2026-02 | 2199 | 45.5% | 43.6% |
-| 2026-03 | 3224 | 45.3% | 44.4% |
-| 2026-04 | 1210 | 45.6% | 45.4% |
+| all | 16726 | 34.8% / 58.0% / 55.9% | 65.2% / 60.7% / 61.3% |
+| p>=55% | 11581 | 30.1% / 61.8% / 60.1% | 69.9% / 63.5% / 64.0% |
+| p>=60% | 7191 | 25.6% / 65.9% / 63.7% | 74.4% / 66.6% / 67.9% |
+
+## Proxy line: nearest 0.5 (whole lines push)
+
+### PTS — 578 pushes excluded of 16726
+
+Walk-forward shrink factor during the season: 0.73–0.77. **Gate: PASS** (60%–65% +0.8%, 65%–70% -0.7%, 70%–75% -1.8%).
+
+Calibrated (shrunk) pick-side:
+
+| Model prob | n | Mean pred | Hit rate | ±95% | Hit − pred | Over share |
+|---|---|---|---|---|---|---|
+| 50%–55% | 6304 | 52.4% | 52.3% | 1.2% | -0.1% | 41% |
+| 55%–60% | 5088 | 57.4% | 56.5% | 1.4% | -0.9% | 30% |
+| 60%–65% | 3111 | 62.2% | 63.0% | 1.7% | +0.8% | 23% |
+| 65%–70% | 1339 | 67.0% | 66.2% | 2.5% | -0.7% | 22% |
+| 70%–75% | 270 | 71.8% | 70.0% | 5.5% | -1.8% | 24% |
+| 75%–100% | 36 | 76.5% | 83.3% | 12.2% | +6.8% | 33% |
+
+Over/under split, calibrated:
+
+| Picks | n | Over: share / pred / hit | Under: share / pred / hit |
+|---|---|---|---|
+| all | 16148 | 32.4% / 56.2% / 55.8% | 67.6% / 58.1% / 57.9% |
+| p>=55% | 9844 | 26.6% / 60.1% / 59.6% | 73.4% / 60.9% / 60.6% |
+| p>=60% | 4756 | 22.5% / 64.3% / 64.6% | 77.5% / 64.2% / 64.4% |
+
+Raw (before shrinkage), for reference:
+
+| Model prob | n | Mean pred | Hit rate | ±95% | Hit − pred | Over share |
+|---|---|---|---|---|---|---|
+| 50%–55% | 4809 | 52.5% | 51.5% | 1.4% | -1.0% | 43% |
+| 55%–60% | 4148 | 57.4% | 54.5% | 1.5% | -3.0% | 34% |
+| 60%–65% | 3327 | 62.3% | 59.8% | 1.7% | -2.6% | 26% |
+| 65%–70% | 2164 | 67.3% | 63.6% | 2.0% | -3.7% | 22% |
+| 70%–75% | 1182 | 72.2% | 65.4% | 2.7% | -6.8% | 22% |
+| 75%–100% | 518 | 78.3% | 70.7% | 3.9% | -7.7% | 24% |
+
+### REB — 1317 pushes excluded of 16726
+
+Raw pick-side (no recalibration applied):
+
+| Model prob | n | Mean pred | Hit rate | ±95% | Hit − pred | Over share |
+|---|---|---|---|---|---|---|
+| 50%–55% | 4761 | 52.4% | 52.5% | 1.4% | +0.1% | 47% |
+| 55%–60% | 4199 | 57.4% | 57.5% | 1.5% | +0.1% | 38% |
+| 60%–65% | 3091 | 62.4% | 62.5% | 1.7% | +0.1% | 31% |
+| 65%–70% | 1935 | 67.3% | 66.7% | 2.1% | -0.6% | 28% |
+| 70%–75% | 963 | 72.2% | 73.3% | 2.8% | +1.1% | 26% |
+| 75%–100% | 460 | 78.5% | 76.1% | 3.9% | -2.4% | 29% |
+
+Over/under split:
+
+| Picks | n | Over: share / pred / hit | Under: share / pred / hit |
+|---|---|---|---|
+| all | 15409 | 37.0% / 58.3% / 56.5% | 63.0% / 60.5% / 61.5% |
+| p>=55% | 10648 | 32.7% / 62.1% / 60.2% | 67.3% / 63.3% / 64.2% |
+| p>=60% | 6449 | 29.1% / 66.2% / 62.7% | 70.9% / 66.6% / 67.8% |
+
+## Season start: prior-season history counts toward the 5-game minimum
+
+First 21 days of the season: 2153 projections, of which 1161 relied on last season (fewer than 5 games this season). Flags: TEAM_CHANGE 396, ROLE_CHANGE 505.
+
+Pick-side at the nearest-x.5 proxy (PTS calibrated, REB raw):
+
+| Market | Group | n | Pred | Hit | n (p≥60%) | Pred | Hit |
+|---|---|---|---|---|---|---|---|
+| PTS | carried_history(<5 games this season) | 1161 | 57.7% | 60.1% | 348 | 64.1% | 75.9% |
+| PTS | flagged | 781 | 57.6% | 58.3% | 225 | 64.5% | 69.3% |
+| PTS | unflagged | 1372 | 57.6% | 59.2% | 414 | 64.3% | 69.3% |
+| PTS | TEAM_CHANGE (whole season) | 778 | 57.3% | 59.1% | 219 | 63.9% | 69.4% |
+| PTS | ROLE_CHANGE (whole season) | 686 | 57.8% | 60.8% | 220 | 64.1% | 72.7% |
+| REB | carried_history(<5 games this season) | 1161 | 59.9% | 63.0% | 523 | 66.2% | 71.5% |
+| REB | flagged | 781 | 59.5% | 62.2% | 330 | 66.0% | 70.3% |
+| REB | unflagged | 1372 | 59.7% | 60.6% | 601 | 66.2% | 69.7% |
+| REB | TEAM_CHANGE (whole season) | 778 | 59.6% | 64.4% | 321 | 66.4% | 72.0% |
+| REB | ROLE_CHANGE (whole season) | 686 | 59.9% | 63.4% | 306 | 66.1% | 70.3% |

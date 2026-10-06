@@ -21,6 +21,8 @@ odds_api:
   monthly_quota: 500         # free tier
   reserve: 40                # stop once remaining credits would drop below this
   usage_file: data/odds_api_usage.json
+  max_games_per_day: 3       # only the top 3 pick games get Odds API calls
+  when_short: keep_closing   # budget short: skip the morning call, keep the closing call
 
 backtest:
   # ESPN season year: 2026 = 2025-26. Earlier seasons are history only (they
@@ -29,5 +31,11 @@ backtest:
     - {season: 2025, start: 2024-10-22, end: 2025-04-13}
     - {season: 2026, start: 2025-10-21, end: 2026-04-12}
   evaluate_season: 2026
+
+calibration:
+  # Points probabilities are shrunk toward 50% by a walk-forward-fitted factor.
+  points_shrink: true
+  # Points go in the brief only if calibrated pick-side buckets 60-75% are within this.
+  points_gate_pp: 0.02
   min_prior_games: 5         # player needs this many prior games to be projected
   min_proj_minutes: 20       # props are only offered on rotation players

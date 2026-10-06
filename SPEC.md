@@ -32,18 +32,18 @@ Report: `output/step0/source_report_github-actions.md`.
 * `nba_api` / stats.nba.com timed out and cdn.nba.com returned 403 from GitHub Actions. **Treat `nba_api` as unavailable.** It is not used anywhere in the pipeline.
 * **ESPN's public JSON is the primary source** for schedule, box scores, player game logs, rosters/positions, game spreads and injuries.
 * **Basketball-Reference is for gap filling only** (e.g. a box score ESPN is missing), always under its rate limit (<20 requests/minute; the fetcher spaces requests ≥3.5 s apart).
-* **Cache every raw response** gzipped, exactly as received (`data/raw/<source>/`). Completed games and past dates are never refetched.
+* **Cache every raw response** gzipped, exactly as received (`data/raw/<source>/`), **committed to git**. Completed games and past dates are never refetched.
 * **If ESPN fails** (after retries) on the run's required data, the brief says **"Data source down, no picks"** and contains no picks. No partial or stale-data picks.
 * The official NBA injury report PDF was not found during preseason. ESPN injuries is the injury source; recheck the official report after opening night.
 * PrizePicks (403) and Underdog (426) are unusable. ESPN propBets had no props for a preseason game; not relied on.
 
 ### The Odds API (free tier, `ODDS_API_KEY` secret)
 
-* Used **only for games that have picks**, and never as a model input. Two uses:
+* Used **only for games that have picks**, capped at the **top 3 pick games per day**, and never as a model input. Two uses:
   1. One morning call per pick's game, for `CONSENSUS_GAP`.
   2. One call per pick's game near tip-off, as a **proxy closing line** for CLV.
 * The real credit cost of each call type is measured from the API's response headers (`x-requests-last`, `x-requests-remaining`) and logged to `data/odds_api_usage.json`.
-* **Monthly budget guard**: before each call, estimate its cost from the largest cost observed for that call type. Refuse the call if it would take the remaining balance below a reserve (`odds_api.reserve` in `config.yaml`), so usage stops before the 500-credit monthly limit. A refused call means the pick goes out without `CONSENSUS_GAP` checking / without a closing line, and the brief says so.
+* **Monthly budget guard**: before each call, estimate its cost from the largest cost observed for that call type. Refuse the call if it would take the remaining balance below a reserve (`odds_api.reserve` in `config.yaml`), so usage stops before the 500-credit monthly limit. A refused call means the pick goes out without `CONSENSUS_GAP` checking / without a closing line, and the brief says so. **When the budget runs short, skip the morning call and keep the closing call** (CLV matters more than the sanity check).
 
 ## Pipeline
 
@@ -87,7 +87,15 @@ Do a walk-forward backtest on the 2025–26 season before any live use:
 * Use only information available before each game.
 * Report calibration buckets (does a model 60% hit about 60% of the time?).
 * **The backtest measures calibration only, not edge.** There are no free historical prop lines, so it cannot show the model beats the market. Edge is measured live, by CLV against the proxy closing line, in the paper ledger.
-* Because there are no historical lines, calibration is checked at a set of lines around each projection, using box-score data pulled from ESPN and cached.
+* Because there are no historical lines, calibration is checked at a proxy line built from the player's last-10 average, in two versions: nearest x.5 (no pushes) and nearest 0.5 (whole lines push). The over/under split of picks is reported for both.
+* Earlier seasons (2024–25) are replayed first as history; calibration is reported on 2025–26.
+* **Points recalibration**: points probabilities are shrunk toward 50% by a factor fitted walk-forward (each date uses only earlier dates' results). **Gate**: points go into the brief only if the calibrated pick-side buckets 60–65%, 65–70% and 70–75% are each within about 2pp of their hit rate; otherwise the brief is rebounds-only.
+
+## Season start
+
+* Prior-season history counts toward the 5-game minimum, so players are projected from opening night.
+* Flag `TEAM_CHANGE` on any pick for a player in his first 10 games with a new team (off-season move or trade).
+* Flag `ROLE_CHANGE` during a season's first 10 games when the player's average minutes this season differ from last season's recent minutes by 6 or more.
 
 ## Automation
 
