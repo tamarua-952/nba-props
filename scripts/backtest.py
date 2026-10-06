@@ -231,20 +231,20 @@ def evaluate(proj: pd.DataFrame, ev_season: int) -> dict:
                 "days": EARLY_DAYS,
                 "all": {"n": len(early), "pred": float(early.p_side.mean()), "hit": float(early.hit.mean())},
                 "carried_history(<5 games this season)": summary_row(early[early.season_games < 5]),
-                "flagged": summary_row(early[early.flags != ""]),
-                "unflagged": summary_row(early[early.flags == ""]),
-                "buckets_unflagged": buckets(early[early.flags == ""]),
+                "flagged": summary_row(early[early["flags"] != ""]),
+                "unflagged": summary_row(early[early["flags"] == ""]),
+                "buckets_unflagged": buckets(early[early["flags"] == ""]),
             }
-            m["flags_season"] = {f: summary_row(use[use.flags.str.contains(f)]) for f in ("TEAM_CHANGE", "ROLE_CHANGE")}
+            m["flags_season"] = {f: summary_row(use[use["flags"].str.contains(f)]) for f in ("TEAM_CHANGE", "ROLE_CHANGE")}
             vres[s.upper()] = m
         res["versions"][version] = vres
-    res["flag_counts_eval_season"] = {f: int(ev.flags.str.contains(f).sum()) for f in ("TEAM_CHANGE", "ROLE_CHANGE")}
+    res["flag_counts_eval_season"] = {f: int(ev["flags"].str.contains(f).sum()) for f in ("TEAM_CHANGE", "ROLE_CHANGE")}
     early_ev = ev[(pd.to_datetime(ev["date"]) - season_start).dt.days < EARLY_DAYS]
     res["season_start_projections"] = {
         "first_days": EARLY_DAYS, "projected": len(early_ev),
         "carried_history": int((early_ev.season_games < 5).sum()),
-        "flagged_team_change": int(early_ev.flags.str.contains("TEAM_CHANGE").sum()),
-        "flagged_role_change": int(early_ev.flags.str.contains("ROLE_CHANGE").sum()),
+        "flagged_team_change": int(early_ev["flags"].str.contains("TEAM_CHANGE").sum()),
+        "flagged_role_change": int(early_ev["flags"].str.contains("ROLE_CHANGE").sum()),
     }
     return res
 
