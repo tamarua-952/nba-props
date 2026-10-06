@@ -35,6 +35,15 @@ def norm(name: str) -> str:
     return re.sub(r"[^a-z]", "", s)
 
 
+def short_games(teams: list[dict], players: list[dict]) -> list[dict]:
+    """Team-games where player points don't add up to the team score (ESPN data holes)."""
+    pts = {}
+    for p in players:
+        pts[(p["game_id"], p["team_id"])] = pts.get((p["game_id"], p["team_id"]), 0) + p["pts"]
+    return [{"game_id": t["game_id"], "team": t["team"], "missing_pts": t["pts"] - pts.get((t["game_id"], t["team_id"]), 0)}
+            for t in teams if t["pts"] != pts.get((t["game_id"], t["team_id"]), 0)]
+
+
 def main() -> None:
     cfg = config.load()["backtest"]
     season = cfg["season"]
@@ -48,7 +57,9 @@ def main() -> None:
     while day <= end:
         sched += espn.parse_scoreboard(espn.scoreboard(ef, day))
         day += dt.timedelta(days=1)
-    sched = [g for g in sched if g["season_type"] == espn.REGULAR_SEASON and g["completed"]]
+    # ESPN tags All-Star weekend games as regular season; NBA franchises have ids 1-30.
+    sched = [g for g in sched if g["season_type"] == espn.REGULAR_SEASON and g["completed"]
+             and espn.is_franchise(g["home_id"]) and espn.is_franchise(g["away_id"])]
     sched = list({g["game_id"]: g for g in sched}.values())
     print(f"{len(sched)} completed regular-season games, {ef.network_calls} network calls so far", flush=True)
 
@@ -108,6 +119,7 @@ def main() -> None:
         "failures": failures, "espn_network_calls": ef.network_calls,
         "bbref_network_calls": bf.network_calls if bf else 0,
         "games_with_spread": sum(1 for g in games if g["home_spread"] is not None),
+        "box_points_short_of_team_score": short_games(teams, players),
     }
     (out / f"pull_report_{season}.json").write_text(json.dumps(report, indent=1))
     print(json.dumps({k: v for k, v in report.items() if k not in ("bbref_filled",)}, indent=1))

@@ -11,6 +11,11 @@ SITE = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba"
 REGULAR_SEASON = 2
 
 
+def is_franchise(team_id: str) -> bool:
+    """ESPN ids 1-30 are NBA franchises; All-Star and exhibition sides use other ids."""
+    return str(team_id).isdigit() and 1 <= int(team_id) <= 30
+
+
 def fetcher(cache_dir=None) -> Fetcher:
     cfg = config.load()["sources"]["espn"]
     return Fetcher("espn", cfg["min_interval_s"], cache_dir=cache_dir)
@@ -121,6 +126,12 @@ def parse_summary(s: dict) -> tuple[dict, list[dict], list[dict]]:
         keys = block["keys"]
         for a in block["athletes"]:
             ath = a["athlete"]
+            if "id" not in ath:
+                # ESPN sometimes lists an unlinked placeholder (shortName only, no id).
+                if a.get("didNotPlay") or not a.get("stats"):
+                    continue
+                ath = {**ath, "id": f"noid:{tid}:{ath.get('shortName', '?')}",
+                       "displayName": ath.get("shortName", "?")}
             row = {
                 "game_id": game["game_id"],
                 "team_id": tid,

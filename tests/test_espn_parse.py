@@ -33,3 +33,12 @@ def test_parse_scoreboard():
     games = espn.parse_scoreboard(load("scoreboard_20260315.gz"))
     assert len(games) == 7
     assert all(g["completed"] and g["season_type"] == 2 for g in games)
+
+
+def test_placeholder_athlete_without_id_is_skipped_when_dnp():
+    s = load("summary_401810831.gz")
+    block = s["boxscore"]["players"][0]["statistics"][0]
+    block["athletes"].append({"athlete": {"links": [], "shortName": "Olbrich"}, "starter": False,
+                              "didNotPlay": True, "stats": []})
+    _, _, players = espn.parse_summary(s)
+    assert not any(p["player"] == "Olbrich" for p in players)

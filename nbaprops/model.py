@@ -27,7 +27,6 @@ from dataclasses import dataclass, field
 import pandas as pd
 
 POSITIONS = ("G", "F", "C")
-TEAM_MINUTES = 240.0
 
 # Fixed priors for v1; revisit with the backtest's segment reports.
 P = {
@@ -116,6 +115,18 @@ class League:
         self.lg_pts = {p: [0.0, 0] for p in POSITIONS}  # per-100 sums, counts
         self.lg_reb = {p: [0.0, 0] for p in POSITIONS}
         self.lg_poss = [0.0, 0]
+        # Walk-forward variance calibration: running mean of squared standardised
+        # errors of past projections, per stat. Multiplies the model variance.
+        self.z2 = {"pts": [0.0, 0], "reb": [0.0, 0]}
+
+    def var_inflation(self, stat: str) -> float:
+        s, n = self.z2[stat]
+        return max(s / n, 1.0) if n >= 500 else 1.0
+
+    def record_result(self, stat: str, mean: float, var_model: float, actual: float) -> None:
+        """Feed back a completed projection (model variance before inflation)."""
+        self.z2[stat][0] += (actual - mean) ** 2 / var_model
+        self.z2[stat][1] += 1
 
     # ------------------------------------------------------------ helpers
 
@@ -154,15 +165,15 @@ class League:
             return []
         out_regulars = self.regulars(team_id) - available
 
-        # Minutes: rescale recent minutes so the pool sums to 240, weighting by room to grow.
+        # Minutes: recent-weighted minutes, plus the minutes absent regulars usually play,
+        # handed out by room to grow (so starters near the cap gain little). Players who
+        # merely appear on the roster are not scaled down: most DNP-coach's-decision
+        # players would otherwise drag every starter's projection below reality.
         base = {pid: min(self.players[pid].ew_min.value, P["max_minutes"]) for pid in pool}
-        deficit = TEAM_MINUTES - sum(base.values())
-        if deficit >= 0:
-            room = {pid: max(P["max_minutes"] - m, 0.0) * m for pid, m in base.items()}
-        else:
-            room = {pid: m for pid, m in base.items()}
+        freed = sum(min(self.players[p].ew_min.value, P["max_minutes"]) for p in out_regulars)
+        room = {pid: max(P["max_minutes"] - m, 0.0) * m for pid, m in base.items()}
         rsum = sum(room.values()) or 1.0
-        mins = {pid: min(base[pid] + deficit * room[pid] / rsum, P["max_minutes"]) for pid in pool}
+        mins = {pid: min(base[pid] + freed * room[pid] / rsum, P["max_minutes"]) for pid in pool}
 
         b2b = t.last_date is not None and (date - t.last_date).days == 1
         spread_abs = abs(team_spread) if team_spread is not None else 0.0
@@ -213,7 +224,8 @@ class League:
                 w = ps.n / (ps.n + P["phi_shrink_games"])
                 phi = max(w * phi_p + (1 - w) * phi_lg[stat], 1.0)
                 row[f"{stat}_mean"] = mean
-                row[f"{stat}_var"] = mean * phi
+                row[f"{stat}_var_model"] = mean * phi
+                row[f"{stat}_var"] = mean * phi * self.var_inflation(stat)
                 row[f"{stat}_opp_factor"] = opp_factor
             row["pace_factor"] = pace_factor
             rows.append(row)
